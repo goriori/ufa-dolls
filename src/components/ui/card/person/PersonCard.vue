@@ -5,7 +5,7 @@ import Card from "@/components/ui/card/Card.vue";
 type CProps = {
   image: string
   title: string
-  focused?: boolean
+  target?: boolean
 }
 type CEmits = {
   (eventName: 'onClick'): void
@@ -19,11 +19,11 @@ const onClick = () => emits('onClick')
 </script>
 
 <template>
-  <Card :class="['card-person', {focused}]" @click="onClick">
+  <Card :class="['card-person', {target}]" @click="onClick">
     <template #card-center>
       <div class="image-bg">
-        <img class="item"
-             data-x="0" data-y="0"
+        <img
+
              :src="server_url+image || 'https://furman.top/uploads/posts/2022-06/1654264327_11-furman-top-p-novogodnii-kotik-art-krasivo-oboi-11.jpg'"
              alt="preview">
       </div>
@@ -51,9 +51,18 @@ const onClick = () => emits('onClick')
   transition: 0.3s all ease-in-out;
   cursor: pointer;
   border: 10px solid transparent;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
 }
 
-.focused {
+.target {
+  opacity: 0.7;
   border-color: rgba(35, 208, 62, 1);
 }
 

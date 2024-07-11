@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useRouter} from "vue-router";
-import {computed, onMounted} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {useDollStore} from "@/store/dolls.store.ts";
 import {Person} from "@/entities/person";
 import interact from 'interactjs'
@@ -12,15 +12,17 @@ import Modals from "@/components/modals/Modals.vue";
 
 const router = useRouter()
 const dollStore = useDollStore()
-const persons = computed(() => dollStore.getTargetTail()?.tail_persons)
+const persons = ref(dollStore.getTargetTail()?.tail_persons)
 const leftPersons = computed(() => persons.value?.slice(0, persons.value?.length / 2))
 const rightPersons = computed(() => persons.value?.slice(persons.value?.length / 2, persons.value?.length))
 const targetBackground = computed(() => serverUrl + dollStore.getTargetTailBackground()?.image)
+const targetPersons = computed(() => dollStore.getTargetTail()?.tail_persons.filter(person => person.target))
 const serverUrl = window.API
 
 const onToMain = () => router.push('/')
 
 const onTargetPerson = (person: Person) => {
+  person.switchTarget()
   dollStore.getTargetTail()?.setTargetPerson(person)
 }
 
@@ -63,12 +65,21 @@ onMounted(() => {
         <PersonCard v-for="item in leftPersons" :key="item.id"
                     :title="item.person_name"
                     :image="item.person_image"
+                    :target="item.target"
                     @on-click="onTargetPerson(item)"
         />
       </section>
       <section class="center">
         <div class="background">
           <img
+              class='person item'
+              data-x="0" data-y="0"
+              v-for="targetPerson in targetPersons"
+              :key="targetPerson.id"
+              :src="serverUrl+targetPerson.person_image"
+              alt="person">
+          <img
+              class="background-image"
               :src="targetBackground"
               alt="">
         </div>
@@ -77,6 +88,8 @@ onMounted(() => {
         <PersonCard v-for="item in rightPersons" :key="item.id"
                     :title="item.person_name"
                     :image="item.person_image"
+                    :target="item.target"
+                    @on-click="onTargetPerson(item)"
         />
       </section>
     </div>
@@ -125,7 +138,19 @@ h1 {
 
 }
 
-img {
+.person {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  max-width: 350px;
+  max-height: 538px;
+  min-height: 538px;
+  border-radius: 30px;
+}
+
+.background-image {
+  position: relative;
   width: 100%;
   height: 100%;
   min-width: 2420px;
