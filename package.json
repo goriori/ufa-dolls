@@ -11,6 +11,7 @@
   "dependencies": {
     "axios": "^1.5.0",
     "date-fns": "^2.30.0",
+    "interactjs": "^1.10.27",
     "pinia": "^2.1.6",
     "sass": "^1.68.0",
     "uuid": "^9.0.1",
@@ -29,8 +30,8 @@
     "eslint-plugin-vue": "^9.3.0",
     "prettier": "^2.7.1",
     "typescript": "^5.2.2",
+    "unplugin-imagemin": "^0.5.13",
     "vite": "^4.4.5",
-    "vue-tsc": "^1.8.5",
-    "unplugin-imagemin": "^0.5.13"
+    "vue-tsc": "^1.8.5"
   }
 }
