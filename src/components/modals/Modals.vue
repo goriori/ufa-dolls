@@ -1,10 +1,21 @@
 <script setup lang="ts">
+import {useApplicationStore} from "@/store/application.store.ts";
+import {computed, onUpdated} from "vue";
 
-import DeleteVideo from "@/components/modals/delete/video/DeleteVideo.vue";
+const applicationStore = useApplicationStore()
+
+const modals = computed(() => applicationStore.getModals())
+onUpdated(()=> console.log(modals.value))
 </script>
 
 <template>
-  <DeleteVideo/>
+  <section class="modals">
+    <template v-for="modal in modals" :key="modal.name">
+      <Transition name="fade">
+        <component v-if="modal.settings.show" :is="modal.component"/>
+      </Transition>
+    </template>
+  </section>
 </template>
 
 <style scoped>

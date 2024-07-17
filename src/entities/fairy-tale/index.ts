@@ -6,13 +6,14 @@ type DefaultBackground = {
     image: string
 }
 
-type TBackground = DefaultBackground & {
+export type TBackground = DefaultBackground & {
     focused: boolean
     switchFocus(): void
 }
 
 type DefaultPerson = {
     id: number
+    title: string
     image: string
 }
 
@@ -49,11 +50,11 @@ export class Tail {
         this.focused = !this.focused
     }
 
-    setTargetBackground(background: TBackground) {
+    setTargetBackground(background: TBackground | null) {
         this.target_background = background
     }
 
-    setTargetPerson(person: Person) {
+    setTargetPerson(person: Person | null) {
         this.target_person = person
     }
 
@@ -62,6 +63,6 @@ export class Tail {
     }
 
     private initPersons(persons: DefaultPerson[]) {
-        return persons.map((person => new Person(person.id, 'person_name', person.image)))
+        return persons.map((person => new Person(person.id, person.title, person.image)))
     }
 }
