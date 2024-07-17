@@ -13,16 +13,19 @@ import DefaultLoader from "@/components/ui/loader/DefaultLoader.vue";
 
 const router = useRouter()
 const dollStore = useDollStore()
+const persons = ref(dollStore.getTargetTail()?.tail_persons)
 const loading = ref(true)
-const persons = computed(() => dollStore.getTargetTail()?.tail_persons)
+
 const leftPersons = computed(() => persons.value?.slice(0, persons.value?.length / 2))
 const rightPersons = computed(() => persons.value?.slice(persons.value?.length / 2, persons.value?.length))
 const targetBackground = computed(() => serverUrl + dollStore.getTargetTailBackground()?.image)
+const targetPersons = computed(() => dollStore.getTargetTail()?.tail_persons.filter(person => person.target))
 const serverUrl = window.API
 const stateRecord = ref(false)
 const onToMain = () => router.push('/')
 
 const onTargetPerson = (person: Person) => {
+  person.switchTarget()
   dollStore.getTargetTail()?.setTargetPerson(person)
 }
 
@@ -156,7 +159,19 @@ h1 {
 
 }
 
-img {
+.person {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  max-width: 350px;
+  max-height: 538px;
+  min-height: 538px;
+  border-radius: 30px;
+}
+
+.background-image {
+  position: relative;
   width: 100%;
   height: 100%;
   min-width: 2420px;
