@@ -11,6 +11,7 @@ const applicationStore = useApplicationStore()
 const dollStore = useDollStore()
 const modalSettings = computed(() => applicationStore.getSettings('success-video'))
 const onSendEmail = async (form: { email: string }) => {
+  console.log('send')
   const targetTail = dollStore.getTargetTail()
   if (targetTail && modalSettings.value?.videoName) {
     const videoFile = await RecorderService.getRecord(modalSettings.value.videoName)

@@ -43,16 +43,30 @@ const onRecord = async () => {
 
 const getParamsAreaRecord = () => {
   const recordArea = document.getElementById('recordArea')
-  return {
+  if (recordArea) return {
     x: recordArea.offsetLeft,
     y: recordArea.offsetTop,
     width: recordArea.offsetWidth,
     height: recordArea.offsetHeight
+  };
+  return {
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0
   }
 }
 
 onMounted(() => {
   interact('.item').draggable({
+    modifiers: [
+      interact.modifiers.restrictRect({
+        restriction: 'parent',
+      }),
+      interact.modifiers.restrictEdges({
+        outer: 'parent',
+      }),
+    ],
     listeners: {
       move(event) {
         const element = event.currentTarget
@@ -86,12 +100,22 @@ onMounted(() => {
           <PersonCard v-for="item in leftPersons" :key="item.id"
                       :title="item.person_name"
                       :image="item.person_image"
+                      :target="item.target"
                       @on-click="onTargetPerson(item)"
           />
         </section>
         <section class="center">
           <div class="background" id="recordArea">
             <img
+                class='person item'
+                data-x="0" data-y="0"
+                v-for="targetPerson in targetPersons"
+                :key="targetPerson.id"
+                :src="serverUrl+targetPerson.person_image"
+                :style="{width:targetPerson.width + 'px', height:targetPerson.height + 'px'}"
+                alt="person">
+            <img
+                class="background-image"
                 :src="targetBackground"
                 alt="">
           </div>
@@ -100,6 +124,8 @@ onMounted(() => {
           <PersonCard v-for="item in rightPersons" :key="item.id"
                       :title="item.person_name"
                       :image="item.person_image"
+                      :target="item.target"
+                      @on-click="onTargetPerson(item)"
           />
         </section>
       </div>
@@ -160,13 +186,10 @@ h1 {
 }
 
 .person {
+  user-select: none;
+  touch-action: none;
   position: absolute;
   z-index: 1;
-  width: 100%;
-  height: 100%;
-  max-width: 350px;
-  max-height: 538px;
-  min-height: 538px;
   border-radius: 30px;
 }
 

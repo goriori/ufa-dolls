@@ -8,7 +8,7 @@ import SoundOn from "@/components/ui/svg/SoundOn.vue";
 import Delete from "@/components/ui/svg/Delete.vue";
 import Pause from "@/components/ui/svg/Pause.vue";
 import {useRoute} from "vue-router";
-import {computed, onMounted, onUpdated, ref} from "vue";
+import {onMounted, ref} from "vue";
 import {RecorderService} from "@/API/RecorderService.ts";
 import Footer from "@/components/footer/Footer.vue";
 import router from "@/router";

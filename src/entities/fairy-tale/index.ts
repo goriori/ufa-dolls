@@ -15,6 +15,8 @@ type DefaultPerson = {
     id: number
     title: string
     image: string
+    width: number,
+    height: number
 }
 
 
@@ -63,6 +65,6 @@ export class Tail {
     }
 
     private initPersons(persons: DefaultPerson[]) {
-        return persons.map((person => new Person(person.id, person.title, person.image)))
+        return persons.map((person => new Person(person.id, person.title, person.image, person.width, person.height)))
     }
 }
