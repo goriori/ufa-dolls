@@ -1,31 +1,51 @@
 <script setup lang="ts">
+import {computed, onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
-import {computed, onMounted} from "vue";
 import {useDollStore} from "@/store/dolls.store.ts";
 import {Person} from "@/entities/person";
+import {RecorderService} from "@/API/RecorderService.ts";
 import interact from 'interactjs'
 import PersonCard from "@/components/ui/card/person/PersonCard.vue";
 import Footer from "@/components/footer/Footer.vue";
 import RecordHint from "@/components/ui/hint/record-hint/RecordHint.vue";
 import PersonHint from "@/components/ui/hint/person-hint/PersonHint.vue";
-import Modals from "@/components/modals/Modals.vue";
+import DefaultLoader from "@/components/ui/loader/DefaultLoader.vue";
 
 const router = useRouter()
 const dollStore = useDollStore()
+const loading = ref(true)
 const persons = computed(() => dollStore.getTargetTail()?.tail_persons)
 const leftPersons = computed(() => persons.value?.slice(0, persons.value?.length / 2))
 const rightPersons = computed(() => persons.value?.slice(persons.value?.length / 2, persons.value?.length))
 const targetBackground = computed(() => serverUrl + dollStore.getTargetTailBackground()?.image)
 const serverUrl = window.API
-
+const stateRecord = ref(false)
 const onToMain = () => router.push('/')
 
 const onTargetPerson = (person: Person) => {
   dollStore.getTargetTail()?.setTargetPerson(person)
 }
 
-const onRecord = () => {
-  console.log('record')
+const onRecord = async () => {
+  if (!stateRecord.value) {
+    stateRecord.value = true
+    await RecorderService.playRecordScreen(getParamsAreaRecord())
+    console.log('record')
+  } else {
+    const {name} = await RecorderService.stopRecordScreen()
+    await router.push(`/play/record/${name}`)
+    console.log('stop')
+  }
+}
+
+const getParamsAreaRecord = () => {
+  const recordArea = document.getElementById('recordArea')
+  return {
+    x: recordArea.offsetLeft,
+    y: recordArea.offsetTop,
+    width: recordArea.offsetWidth,
+    height: recordArea.offsetHeight
+  }
 }
 
 onMounted(() => {
@@ -41,50 +61,61 @@ onMounted(() => {
       },
     }
   })
+  setTimeout(() => loading.value = false, 2000)
 })
 </script>
 
 <template>
   <div class="page">
+    <DefaultLoader v-if="loading" class="loader"/>
     <Teleport to="body">
       <Transition name="fade">
-        <Modals v-if="false"/>
+        <PersonHint v-if="!dollStore.getTargetTail()?.target_person && !loading" :x="800" :y="600" class="pulsar"/>
       </Transition>
       <Transition name="fade">
-        <PersonHint v-if="!dollStore.getTargetTail()?.target_person" :x="800" :y="600" class="pulsar"/>
-      </Transition>
-      <Transition name="fade">
-        <RecordHint :x="1000" :y="1700" class="pulsar"/>
+        <RecordHint v-if="!stateRecord && !loading" :x="1000" :y="1700" class="pulsar"/>
       </Transition>
     </Teleport>
-    <h1>Запись сказки</h1>
-    <div class="recorder">
-      <section class="left">
-        <PersonCard v-for="item in leftPersons" :key="item.id"
-                    :title="item.person_name"
-                    :image="item.person_image"
-                    @on-click="onTargetPerson(item)"
-        />
-      </section>
-      <section class="center">
-        <div class="background">
-          <img
-              :src="targetBackground"
-              alt="">
-        </div>
-      </section>
-      <section class="right">
-        <PersonCard v-for="item in rightPersons" :key="item.id"
-                    :title="item.person_name"
-                    :image="item.person_image"
-        />
-      </section>
-    </div>
-    <Footer @on-to-main="onToMain" @on-record="onRecord"/>
+    <template v-if="!loading">
+      <h1>Запись сказки</h1>
+      <div class="recorder">
+        <section class="left">
+          <PersonCard v-for="item in leftPersons" :key="item.id"
+                      :title="item.person_name"
+                      :image="item.person_image"
+                      @on-click="onTargetPerson(item)"
+          />
+        </section>
+        <section class="center">
+          <div class="background" id="recordArea">
+            <img
+                :src="targetBackground"
+                alt="">
+          </div>
+        </section>
+        <section class="right">
+          <PersonCard v-for="item in rightPersons" :key="item.id"
+                      :title="item.person_name"
+                      :image="item.person_image"
+          />
+        </section>
+      </div>
+    </template>
+    <Transition name="fade">
+      <Footer v-if="!loading" @on-to-main="onToMain" @on-record="onRecord"/>
+    </Transition>
   </div>
 </template>
 
 <style scoped>
+
+
+.loader {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .page {
   width: 100%;
   height: 100%;

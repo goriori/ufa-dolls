@@ -1,4 +1,5 @@
 import {axiosInstance} from "@/utils/axios/axios.ts";
+import {AxiosResponse} from "axios";
 
 type TailBackground = {
     id: number
@@ -7,12 +8,24 @@ type TailBackground = {
 
 type TailPlayer = {
     id: number,
+    title: string
     image: string
 }
 
+type SendData = {
+    videoFile: string,
+    email: string,
+    puppet_id: number
+}
+
+type SuccessSendEmail = 'success'
+type ErrorSendEmail = 'error'
+
+type ResponseSendEmail = AxiosResponse<{ message: SuccessSendEmail | ErrorSendEmail }>
+
 interface TailItem {
     id: number
-    image:string
+    image: string
     background: TailBackground[]
     players: TailPlayer[]
     title: string
@@ -40,6 +53,19 @@ export class TailService {
         const res = await axiosInstance({
             method: 'get',
             url: `/api/people/${tail_id}`
+        })
+        return res.data
+    }
+
+    static async sendEmailTail(sendData: SendData) {
+        const res: ResponseSendEmail = await axiosInstance({
+            method: 'post',
+            url: '/api/puppet/email',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data'
+            },
+            data: sendData
         })
         return res.data
     }
