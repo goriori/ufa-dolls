@@ -4,8 +4,7 @@ import {useRouter} from "vue-router";
 import {computed, ComputedRef, onMounted, ref} from "vue";
 import {useDollStore} from "@/store/dolls.store.ts";
 import {TailService} from "@/API/TailService.ts";
-import {Tail, TBackground} from "@/entities/fairy-tale";
-import {Background} from "@/entities/background";
+import {Tail, Background, TBackground} from "@/entities/fairy-tale";
 import Footer from "@/components/footer/Footer.vue";
 import TailCard from "@/components/ui/card/tail/TailCard.vue";
 import BackgroundCard from "@/components/ui/card/background/BackgroundCard.vue";
@@ -71,7 +70,16 @@ const flashingCard = (cards: ComputedRef<TBackground[]> | ComputedRef<Tail[]>) =
 const initTails = async () => {
   if (dollsStore.getTails().length === 0) {
     const tails = await TailService.getTails()
-    tails.forEach(tail => dollsStore.addTail(new Tail(tail.id, tail.title, tail.image, tail.background, tail.players)))
+    tails.forEach(tail => {
+      dollsStore.addTail(
+          new Tail(
+              tail.id,
+              tail.title,
+              tail.image,
+              tail.background,
+              tail.players
+          ))
+    })
   }
   setTimeout(() => loading.value = false, 2000)
 }
@@ -125,7 +133,10 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 @import "@/assets/scss/mixins.scss";
-
+.keyboard {
+  left: 50%;
+  transform: translate(-50%,0);
+}
 .loader {
   top: 50%;
   left: 50%;

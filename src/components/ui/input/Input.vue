@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {computed} from "vue";
 
 type IProps = {
   type: 'text' | 'number' | 'phone' | 'email' | 'password' | 'search',
@@ -19,31 +19,32 @@ type IEmits = {
 const props = defineProps<IProps>()
 const emits = defineEmits<IEmits>()
 
-const modelValue = ref(props.modelValue)
+const modelValue = computed(() => props.modelValue)
 
 const onChange = (event: Event) => {
-  modelValue.value = (event.target as HTMLInputElement).value
-  emits('update:modelValue', modelValue.value)
-  emits('onChange', modelValue.value)
+  const newValue =  (event.target as HTMLInputElement).value
+  emits('update:modelValue', newValue)
+  emits('onChange',newValue)
 
 }
 
 const onInput = (event: Event) => {
-  modelValue.value = (event.target as HTMLInputElement).value
-  emits('update:modelValue', modelValue.value)
-  emits('onInput', modelValue.value)
+  const newValue =  (event.target as HTMLInputElement).value
+  emits('update:modelValue', newValue)
+  emits('onInput', newValue)
 }
 </script>
 
 <template>
-  <input :type="type"
-         :placeholder="placeholder"
-         :disabled="disabled"
-         :class="['input', text_position, color]"
-         required
-         v-model="modelValue"
-         @change="onChange"
-         @input="onInput"
+  <input
+      :type="type"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :class="['input', text_position, color]"
+      required
+      :value="modelValue"
+      @change="onChange"
+      @input="onInput"
   >
 </template>
 
@@ -77,6 +78,7 @@ const onInput = (event: Event) => {
     border-color: var(--primary-border-color);
     outline: none;
   }
+
 
   &::placeholder {
     color: rgba(255, 255, 255, 1);

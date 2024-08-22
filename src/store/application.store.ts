@@ -16,7 +16,8 @@ type MSettings = {
 }
 
 export const useApplicationStore = defineStore('application', () => {
-
+    const loading = ref<boolean>(false)
+    const record = ref<boolean>(false)
     const modals = ref<MItem[]>([
         {
             name: 'success-video',
@@ -31,6 +32,7 @@ export const useApplicationStore = defineStore('application', () => {
             name: 'delete-video',
             component: shallowRef(DeleteVideo),
             settings: {
+                videoName: '',
                 show: false
             }
         },
@@ -49,6 +51,10 @@ export const useApplicationStore = defineStore('application', () => {
         const modal = modals.value.find(modal => modal.name === name)
         if (modal) return modal.settings
     }
+    const getStateLoading = () => loading.value
+    const getStateRecord = () => record.value
+    const toggleLoading = () => loading.value = !loading.value
+    const toggleRecord = () => record.value = !record.value
     const toggleModal = (name: string) => {
         const modal = modals.value.find(modal => modal.name === name)
         if (!modal) return false
@@ -63,7 +69,11 @@ export const useApplicationStore = defineStore('application', () => {
         modals,
         getModals,
         getSettings,
+        getStateRecord,
+        getStateLoading,
+        toggleRecord,
         toggleModal,
+        toggleLoading,
         setSettings,
     }
 })

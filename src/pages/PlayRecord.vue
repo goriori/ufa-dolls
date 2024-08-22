@@ -7,15 +7,17 @@ import SoundOff from "@/components/ui/svg/SoundOff.vue";
 import SoundOn from "@/components/ui/svg/SoundOn.vue";
 import Delete from "@/components/ui/svg/Delete.vue";
 import Pause from "@/components/ui/svg/Pause.vue";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {RecorderService} from "@/API/RecorderService.ts";
 import Footer from "@/components/footer/Footer.vue";
-import router from "@/router";
 import {useApplicationStore} from "@/store/application.store.ts";
 import {formatTime} from "@/utils/helpers/formatTime.ts";
+import {useDollStore} from "@/store/dolls.store.ts";
 
 const applicationStore = useApplicationStore()
+const dollsStore = useDollStore()
+const router = useRouter()
 const route = useRoute()
 const recordTail = ref<HTMLVideoElement | null>(null)
 const durationTime = ref<string | undefined>('00:00')
@@ -44,15 +46,19 @@ const onBackStep = () => {
     recordTail.value.currentTime -= 10
   }
 }
-
 const onMuted = () => {
   if (recordTail.value) {
     recordTail.value.muted = !recordTail.value.muted;
     sound.value = recordTail.value.muted
   }
 }
-
-const onToMain = () => router.push('/')
+const onToMain = () => {
+  dollsStore.getTargetTail()?.switchFocus()
+  dollsStore.getTargetTail()?.setTargetPerson(null)
+  dollsStore.getTargetTail()?.setTargetBackground(null)
+  dollsStore.setTargetTail(null)
+  router.push('/')
+}
 const onNext = () => {
   applicationStore.setSettings('success-video', {
     targetVideo: recordTail.value?.src,
@@ -60,7 +66,10 @@ const onNext = () => {
   })
   applicationStore.toggleModal('success-video')
 }
-const onDelete = () => applicationStore.toggleModal('delete-video')
+const onDelete = () => {
+  applicationStore.setSettings('delete-video', {videoName: route.params.videoName})
+  applicationStore.toggleModal('delete-video')
+}
 
 const onUpdateProgressVideoPlay = () => {
   if (recordTail.value) {
@@ -70,13 +79,17 @@ const onUpdateProgressVideoPlay = () => {
 onMounted(async () => {
   const videoName = route.params.videoName
   if (recordTail.value) {
-    await RecorderService.getRecord(videoName as string);
-    recordTail.value.src = `http://localhost:3000/api/video/${videoName}`
-    recordTail.value.load()
-    recordTail.value.onloadedmetadata = function () {
-      duration.value = recordTail.value?.duration as number
-      durationTime.value = formatTime(recordTail.value?.duration as number)
-    };
+    const videoLoaded = await RecorderService.getRecord(videoName as string);
+    if (videoLoaded) {
+      recordTail.value.src = `http://localhost:3000/api/video/${videoName}`
+      recordTail.value.load()
+      recordTail.value.onloadedmetadata = function () {
+        duration.value = recordTail.value?.duration as number
+        durationTime.value = formatTime(recordTail.value?.duration as number)
+      };
+    } else {
+      await router.push('/')
+    }
   }
 })
 </script>
@@ -105,7 +118,7 @@ onMounted(async () => {
             <Button color="primary" :icon="NextStepVideo" @click="onNextStep"/>
           </div>
           <div class="right">
-            <Button v-if="!sound" color="primary" :icon="SoundOff" @click="onMuted"/>
+            <Button v-if="sound" color="primary" :icon="SoundOff" @click="onMuted"/>
             <Button v-else color="primary" :icon="SoundOn" @click="onMuted"/>
             <Button color="primary" :icon="Delete" @click="onDelete"/>
           </div>

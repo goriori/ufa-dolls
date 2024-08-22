@@ -1,4 +1,17 @@
-const reg = /^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/
-const regDate = /(0?[1-9]|[12][0-9]|3[01])[/\-.](0?[1-9]|1[012])[ /.-]/
-const emailErr = reg.test('email')
-const dateErr = regDate.test('date')
+
+
+export const useRegular = () => {
+    const dateRegular = /(0?[1-9]|[12][0-9]|3[01])[/\-.](0?[1-9]|1[012])[ /.-]/
+    const emailRegular =
+        /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    const phoneRegular = /^\+?[1-9][0-9]{7,14}$/
+    const dateTest = (date) => dateRegular.test(date)
+    const emailTest = (email) => emailRegular.test(email)
+    const phoneTest = (phone) => phoneRegular.test(phone)
+
+    return {
+        dateTest,
+        emailTest,
+        phoneTest
+    }
+}

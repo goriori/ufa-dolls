@@ -15,7 +15,7 @@
   &-base {
     position: fixed;
     inset: 0;
-    z-index: 100;
+    z-index: 90;
     width: 100vw;
     height: 100vh;
     backdrop-filter: blur(5px);

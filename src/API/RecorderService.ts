@@ -6,23 +6,48 @@ type RecordData = {
     width: number,
     height: number
 }
+
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:3000',
+    baseURL: window.LOCAL_API,
 })
 
 export class RecorderService {
     static async playRecordScreen(recordData: RecordData) {
-        const res = await axiosInstance({method: 'post', url: '/api/recorder/start', params: {...recordData}})
-        return res.data
+        try {
+            const res = await axiosInstance({method: 'post', url: '/api/recorder/start', params: {...recordData}})
+            return res.data
+        } catch (e) {
+            return false
+        }
+
     }
 
     static async stopRecordScreen() {
-        const res = await axiosInstance({method: 'post', url: '/api/recorder/finish'})
-        return res.data
+        try {
+            const res = await axiosInstance({method: 'post', url: '/api/recorder/finish'})
+            return res.data
+        } catch (e) {
+            return false
+        }
+
     }
 
     static async getRecord(videoName: string) {
-        const res = await axiosInstance({method: 'get', url: `/api/video/${videoName}`})
-        return res.data
+        try {
+            const res = await axiosInstance({method: 'get', url: `/api/video/${videoName}`, responseType: 'blob'})
+            return new File([res.data], videoName + '.mp4', {type: res.data.type});
+        } catch (e) {
+            return false
+        }
+    }
+
+    static async deleteRecord(videoName: string) {
+        try {
+            const res = await axiosInstance({method: 'delete', url: `/api/video/delete/${videoName}`})
+            return res.data.delete as boolean
+        } catch (e) {
+            return false
+        }
+
     }
 }

@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import {useApplicationStore} from "@/store/application.store.ts";
-import {computed, onUpdated} from "vue";
+import {computed} from "vue";
 
 const applicationStore = useApplicationStore()
 
 const modals = computed(() => applicationStore.getModals())
-onUpdated(()=> console.log(modals.value))
 </script>
 
 <template>

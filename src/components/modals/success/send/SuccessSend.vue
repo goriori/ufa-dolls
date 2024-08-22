@@ -16,7 +16,6 @@ const onToMain = () => {
   const targetTail = dollsStore.getTargetTail()
   targetTail?.switchFocus()
   targetTail?.setTargetPerson(null)
-  targetTail?.target_background?.switchFocus()
   targetTail?.setTargetBackground(null)
   dollsStore.setTargetTail(null)
   onClose()

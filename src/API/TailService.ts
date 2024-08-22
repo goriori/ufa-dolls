@@ -5,15 +5,19 @@ type TailBackground = {
     id: number
     image: string
 }
+type PlayerLocation = 'leftUpAngle' | 'leftDownAngle' | 'rightUpAngle' | 'rightDownAngle' | 'centre'
 
 type TailPlayer = {
     id: number,
     title: string
     image: string
+    width: number,
+    height: number
+    location: PlayerLocation
 }
 
 type SendData = {
-    videoFile: string,
+    videoFile: string | Blob,
     email: string,
     puppet_id: number
 }
@@ -58,15 +62,21 @@ export class TailService {
     }
 
     static async sendEmailTail(sendData: SendData) {
-        const res: ResponseSendEmail = await axiosInstance({
-            method: 'post',
-            url: '/api/puppet/email',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'multipart/form-data'
-            },
-            data: sendData
-        })
-        return res.data
+        try {
+            const res: ResponseSendEmail = await axiosInstance({
+                method: 'post',
+                url: '/api/puppet/email',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data'
+                },
+                data: sendData
+            })
+            return res.data
+        } catch (e) {
+            console.log(e)
+            return false
+        }
+
     }
 }

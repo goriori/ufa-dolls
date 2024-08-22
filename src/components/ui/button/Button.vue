@@ -35,6 +35,10 @@ defineProps<BProps>()
   border-radius: 20px;
 }
 
+.btn-icon {
+  display: flex;
+}
+
 .primary {
   background: var(--primary-btn-color);
   border-color: var(--primary-border-color);

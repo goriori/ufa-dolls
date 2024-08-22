@@ -1,0 +1,110 @@
+@import '@/assets/scss/variables';
+
+.keyboard {
+  position: absolute;
+  z-index: 1000000;
+  margin: 0 auto;
+  transform: translateX(-50%);
+
+  &-shifted {
+    text-transform: uppercase;
+  }
+
+
+  &__block {
+    position: relative;
+
+    border-radius: 48px;
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background-color: rgba(209, 209, 209, 1);
+  }
+
+  &__close {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    svg {
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  &__row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    &.phone {
+      flex-wrap: wrap;
+      justify-content: space-between;
+
+      @media (max-width: $md4k + px) {
+        max-width: 500px;
+      }
+      @media (max-width: $md0 + px) {
+        max-width: 160px;
+      }
+      .keyboard__btn.big {
+        flex-grow: 1;
+        width: auto;
+      }
+    }
+  }
+
+  &__btn {
+    //background-color: rgba(252, 198, 73, 0.1);
+    font-family: OpenSans, serif;
+    background-color: rgba(255, 255, 255, 1);
+    color: #000;
+    font-weight: 500;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    @media (max-width: $md4k + px) {
+      width: 150px;
+      height: 150px;
+      font-size: 32px;
+    }
+    @media (max-width: $md0 + px) {
+      width: 52px;
+      height: 52px;
+      font-size: 16px;
+    }
+    &.big {
+      width: 150px;
+    }
+
+    &.space {
+      width: 800px;
+    }
+  }
+}
+
+.keyboard .active {
+  background-color: #ddd;
+}
+
+.shift-active {
+  fill: #000;
+}
+
+.shift {
+  margin-right: 5px;
+}
+
+.keyboard__btn.backspace-anim {
+  background-color: #fff;
+  animation: backspaceAnim 5s linear forwards;
+}
+
+@keyframes backspaceAnim {
+  0% { background-color: #fff; }
+  100% { background-color: #ddd; }
+}

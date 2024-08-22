@@ -1,30 +1,52 @@
 <script setup lang="ts">
 
+import {ref} from "vue";
+import {useRegular} from "@/utils/useRegular";
 import Modal from "@/components/ui/modals/Modal.vue";
 import Button from "@/components/ui/button/Button.vue";
 import SuccessVideo from "@/components/ui/svg/SuccessVideo.vue";
 import Input from "@/components/ui/input/Input.vue";
 import Email from "@/components/ui/svg/Email.vue";
 import ComeBack from "@/components/ui/svg/ComeBack.vue";
+import Keyboard from "@/components/ui/keyboard/Keyboard.vue";
 
 type MProps = {
   videoSrc: string
 }
-type Form = {
-  email: string
+export type Form = {
+  email: {
+    ref: HTMLInputElement | null
+    value: string
+    focus: boolean
+  }
 }
 
 type MEmits = {
   (eventName: 'onSendEmail', form: Form): void
   (eventName: 'onToMain'): void
 }
-const form = {
-  email: '',
-}
+
+const form = ref<Form>({
+  email: {
+    ref: null,
+    value: '',
+    focus: false
+  },
+})
 defineProps<MProps>()
 const emits = defineEmits<MEmits>()
+const {emailTest} = useRegular()
+
+const onPressKey = (field: keyof Form, value: string) => {
+  console.log(field, value, form.value)
+  form.value[field].value += value
+}
+const onBackspace = (field: keyof Form) => {
+  form.value[field].value = form.value[field].value.slice(0, form.value[field].value.length - 1)
+}
 const onSendEmail = () => {
-  emits('onSendEmail', form)
+  if (!emailTest(form.value.email.value)) return
+  emits('onSendEmail', form.value)
 }
 const onToMain = () => emits('onToMain')
 </script>
@@ -38,12 +60,26 @@ const onToMain = () => emits('onToMain')
         </section>
         <section class="window-center">
           <video class="video" :src="videoSrc"></video>
-          <Input v-model="form.email" type="email" placeholder="Адрес электронной почты" color="secondary"
-                 class="inpt"/>
+          <Input
+              v-model="form.email.value"
+              type="email"
+              placeholder="Адрес электронной почты"
+              color="secondary"
+              class="inpt"
+              @focus="form.email.focus = true"
+          />
+          <Transition name="fade">
+            <Keyboard v-if="form.email.focus" @on-enter="form.email.focus = false"
+                      @on-press="(key:string)=> onPressKey('email', key)"
+                      @on-backspace="onBackspace('email')"
+            />
+          </Transition>
+
         </section>
         <section class="window-bottom">
-          <Button :icon="Email" color="primary" title="Отправить на почту" class="btn" @click="onSendEmail"/>
-          <Button :icon="ComeBack" color="thridy" title="Вернуться на главный экран" class="btn" @click="onToMain"/>
+          <Button :icon="Email" color="primary" title="Отправить на почту" class="btn btn-email" @click="onSendEmail"/>
+          <Button :icon="ComeBack" color="thridy" title="Вернуться на главный экран" class="btn btn-to-main"
+                  @click="onToMain"/>
         </section>
       </div>
     </template>
@@ -112,6 +148,11 @@ hr {
   gap: 30px;
 }
 
+.keyboard {
+  bottom: -300px;
+  left: 50%;
+}
+
 .video {
   width: 100%;
   height: 100%;
@@ -125,10 +166,17 @@ hr {
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   max-height: 150px;
-  gap: 100px;
+  padding: 43px;
+}
 
+.btn-email {
+  gap: 226px;
+}
+
+.btn-to-main {
+  gap: 114px;
 }
 </style>

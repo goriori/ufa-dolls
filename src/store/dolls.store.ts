@@ -12,6 +12,7 @@ const DollsStore = defineStore('dolls', () => {
     const setTargetTail = (tail: Tail | null) => target_tail.value = tail
     const addTail = (tail: Tail) => tails.value.push(tail)
     return {
+        tails,
         getTails,
         getTargetTail,
         getTargetTailBackground,
