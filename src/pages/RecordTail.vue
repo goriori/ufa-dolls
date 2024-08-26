@@ -28,8 +28,7 @@ const stateRecord = ref(false)
 const recordTimer = ref<number | null>(null)
 
 const onToMain = () => {
-  dollStore.setTargetTail(null)
-  router.push('/')
+  applicationStore.toggleModal('confirm-exit')
 }
 
 const onTargetPerson = (person: Person) => {

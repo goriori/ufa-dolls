@@ -4,15 +4,19 @@ import Modal from "@/components/ui/modals/Modal.vue";
 import Button from "@/components/ui/button/Button.vue";
 import Cross from "@/components/ui/svg/Cross.vue";
 import ComeBack from "@/components/ui/svg/ComeBack.vue";
-import EffectWin from "@/components/ui/svg/EffectWin.vue";
+import ArrowRight from "@/components/ui/svg/ArrowRight.vue";
+import NextStepVideo from "@/components/ui/svg/NextStepVideo.vue";
+import NextArrow from "@/components/ui/svg/NextArrow.vue";
 
 type MEmits = {
   (eventName: 'onClose'): void
-  (eventName: 'onToMain'): void
+  (eventName: 'onExit'): void
+  (eventName: 'onCancel'): void
 }
 const emits = defineEmits<MEmits>()
 const onClose = () => emits('onClose')
-const onToMain = () => emits('onToMain')
+const onExit = () => emits('onExit')
+const onCancel = () => emits('onCancel')
 </script>
 
 <template>
@@ -24,11 +28,12 @@ const onToMain = () => emits('onToMain')
           <hr>
         </section>
         <section class="window-center">
-          <EffectWin/>
-          <p>Письмо успешно отправлено</p>
+          <p>Весь прогресс будет утерян, вы уверены, что хотите выйти?</p>
         </section>
         <section class="window-bottom">
-          <Button :icon_left="ComeBack" color="secondary" title="Вернуться на главный экран" class="btn" @click="onToMain"/>
+          <Button :icon_right="NextArrow" color="primary" title="Продолжить запись сказки" class="btn"
+                  @click="onCancel"/>
+          <Button :icon_left="ComeBack" color="thridy" title="Выйти" class="btn" @click="onExit"/>
         </section>
       </div>
     </template>
@@ -40,14 +45,13 @@ const onToMain = () => emits('onToMain')
   width: 100%;
   height: 100%;
   max-width: 1500px;
-  max-height: 1360px;
+  max-height: 1230px;
   border-radius: 80px;
   border: 10px solid rgba(212, 156, 255, 1);;
   background-color: rgba(53, 1, 137, 1);
   padding: 80px;
   display: flex;
   flex-direction: column;
-  gap: 50px;
 }
 
 .window-top {
@@ -82,10 +86,6 @@ hr {
   font-size: 100px;
   font-weight: 600;
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
 }
 
 .window-bottom {
@@ -101,9 +101,7 @@ hr {
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
   max-height: 150px;
-
 }
 </style>

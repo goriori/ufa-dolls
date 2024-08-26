@@ -3,6 +3,7 @@ import {ref, ShallowRef, shallowRef} from "vue";
 import SuccessVideo from '@/components/modals/success/video/SuccessVideo.vue'
 import SuccessSend from '@/components/modals/success/send/SuccessSend.vue'
 import DeleteVideo from '@/components/modals/delete/video/DeleteVideo.vue'
+import ConfirmExit from "@/components/modals/confirm/exit/ConfirmExit.vue";
 
 type MItem = {
     name: string,
@@ -39,6 +40,13 @@ export const useApplicationStore = defineStore('application', () => {
         {
             name: 'success-send',
             component: shallowRef(SuccessSend),
+            settings: {
+                show: false
+            }
+        },
+        {
+            name: 'confirm-exit',
+            component: shallowRef(ConfirmExit),
             settings: {
                 show: false
             }

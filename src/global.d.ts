@@ -10,6 +10,7 @@ declare global {
         API: string
         LOCAL_API: string
         CEF: boolean
+        HOME: string
         TIMEOUT: number
         IS_DEV: boolean
         TIME_RECORD_SECONDS: number

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 type BProps = {
   icon?: object,
+  icon_left?: object,
+  icon_right?: object,
   title?: string,
   color: 'primary' | 'secondary' | 'thridy'
 }
@@ -12,7 +14,13 @@ defineProps<BProps>()
     <section class="btn-icon" v-if="icon">
       <component :is="icon"/>
     </section>
-    <section class="btn-title">{{ title }}</section>
+    <section class="btn-icon" v-if="!icon">
+      <component :is="icon_left"/>
+    </section>
+    <section class="btn-title" v-if="!icon">{{ title }}</section>
+    <section class="btn-right" v-if="!icon">
+      <component :is="icon_right"/>
+    </section>
   </button>
 </template>
 
@@ -25,9 +33,10 @@ defineProps<BProps>()
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   border: 6px solid transparent;
+  padding: 0 45px;
   font-size: 50px;
   font-weight: 700;
   color: #fff;

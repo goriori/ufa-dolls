@@ -11,6 +11,7 @@ import BackgroundCard from "@/components/ui/card/background/BackgroundCard.vue";
 import TailHint from "@/components/ui/hint/tail-hint/TailHint.vue";
 import BackgroundHint from "@/components/ui/hint/bakcground-hint/BackgroundHint.vue";
 import DefaultLoader from "@/components/ui/loader/DefaultLoader.vue";
+import {useApplicationStore} from "@/store/application.store.ts";
 
 enum STEP_APPLICATION {
   SET_TAIL,
@@ -19,6 +20,7 @@ enum STEP_APPLICATION {
 
 const router = useRouter()
 const dollsStore = useDollStore()
+const applicationStore = useApplicationStore()
 const loading = ref(true)
 const step = ref<STEP_APPLICATION>(STEP_APPLICATION.SET_TAIL)
 const tails = computed<Tail[]>(() => dollsStore.getTails())
@@ -51,8 +53,9 @@ const onClickBackground = (background: Background) => {
 }
 
 
-const resetSteps = () => step.value = STEP_APPLICATION.SET_TAIL
-
+const toMain = () => {
+  applicationStore.toggleModal('confirm-exit')
+}
 
 const onNext = () => {
   if (!targetTail.value) return flashingCard(tails)
@@ -127,16 +130,18 @@ onMounted(async () => {
         />
       </div>
     </section>
-    <Footer v-if="!loading" class="page-footer" @on-next="onNext" @on-to-main="resetSteps"/>
+    <Footer v-if="!loading" class="page-footer" @on-next="onNext" @on-to-main="toMain"/>
   </div>
 </template>
 
 <style scoped lang="scss">
 @import "@/assets/scss/mixins.scss";
+
 .keyboard {
   left: 50%;
-  transform: translate(-50%,0);
+  transform: translate(-50%, 0);
 }
+
 .loader {
   top: 50%;
   left: 50%;

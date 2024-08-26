@@ -48,6 +48,7 @@ const onSendEmail = () => {
   if (!emailTest(form.value.email.value)) return
   emits('onSendEmail', form.value)
 }
+
 const onToMain = () => emits('onToMain')
 </script>
 
@@ -77,8 +78,9 @@ const onToMain = () => emits('onToMain')
 
         </section>
         <section class="window-bottom">
-          <Button :icon="Email" color="primary" title="Отправить на почту" class="btn btn-email" @click="onSendEmail"/>
-          <Button :icon="ComeBack" color="thridy" title="Вернуться на главный экран" class="btn btn-to-main"
+          <Button :icon_left="Email" color="primary" title="Отправить на почту" class="btn btn-email"
+                  @click="onSendEmail"/>
+          <Button :icon_left="ComeBack" color="thridy" title="Вернуться на главный экран" class="btn btn-to-main"
                   @click="onToMain"/>
         </section>
       </div>

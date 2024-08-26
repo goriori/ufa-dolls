@@ -23,14 +23,18 @@ const onClick = () => {
 
 <template>
   <Button
-      :icon="!state ? Record: StopRecord"
+      :icon_right="!state ? Record: StopRecord"
       color="thridy" :title="!state ? 'Записать видео': 'Остановить видео'"
-      :class="[!state? 'btn-play' : 'btn-stop']"
+      :class="[!state? 'btn-play' : 'btn-stop', 'btn']"
       @click="onClick"
   />
 </template>
 
 <style scoped>
+.btn {
+  font-size: 40px;
+}
+
 .btn-play {
   gap: 55px;
   max-width: 650px;

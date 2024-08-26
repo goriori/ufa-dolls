@@ -52,13 +52,11 @@ const onMuted = () => {
     sound.value = recordTail.value.muted
   }
 }
+
 const onToMain = () => {
-  dollsStore.getTargetTail()?.switchFocus()
-  dollsStore.getTargetTail()?.setTargetPerson(null)
-  dollsStore.getTargetTail()?.setTargetBackground(null)
-  dollsStore.setTargetTail(null)
-  router.push('/')
+  applicationStore.toggleModal('confirm-exit')
 }
+
 const onNext = () => {
   applicationStore.setSettings('success-video', {
     targetVideo: recordTail.value?.src,
@@ -112,15 +110,15 @@ onMounted(async () => {
         <div class="video-actions">
           <div class="left"></div>
           <div class="center">
-            <Button color="primary" :icon="BackStepVideo" @click="onBackStep"/>
-            <Button v-if="!play" color="primary" :icon="Play" @click="onPlay"/>
-            <Button v-else color="primary" :icon="Pause" @click="onPause"/>
-            <Button color="primary" :icon="NextStepVideo" @click="onNextStep"/>
+            <Button class="btn" color="primary" :icon="BackStepVideo" @click="onBackStep"/>
+            <Button class="btn" v-if="!play" color="primary" :icon="Play" @click="onPlay"/>
+            <Button class="btn" v-else color="primary" :icon="Pause" @click="onPause"/>
+            <Button class="btn" color="primary" :icon="NextStepVideo" @click="onNextStep"/>
           </div>
           <div class="right">
-            <Button v-if="sound" color="primary" :icon="SoundOff" @click="onMuted"/>
-            <Button v-else color="primary" :icon="SoundOn" @click="onMuted"/>
-            <Button color="primary" :icon="Delete" @click="onDelete"/>
+            <Button class="btn" v-if="sound" color="primary" :icon="SoundOff" @click="onMuted"/>
+            <Button class="btn" v-else color="primary" :icon="SoundOn" @click="onMuted"/>
+            <Button class="btn" color="primary" :icon="Delete" @click="onDelete"/>
           </div>
         </div>
       </div>
@@ -205,5 +203,9 @@ video {
     background: linear-gradient(rgba(255, 235, 130, 1), rgba(255, 177, 105, 1), rgba(255, 127, 106, 1));
     border-radius: 100px;
   }
+}
+
+.btn {
+  padding: 0;
 }
 </style>
