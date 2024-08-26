@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import {useRoute} from 'vue-router'
+import {useApplicationStore} from "@/store/application.store.ts";
 import Modals from "@/components/modals/Modals.vue";
 import LoaderPage from "@/components/ui/loader/loader-page/LoaderPage.vue";
-import {useApplicationStore} from "@/store/application.store.ts";
 
 const route = useRoute()
 const applicationStore = useApplicationStore()
+
 </script>
 
 <template>

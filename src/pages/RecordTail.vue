@@ -11,10 +11,12 @@ import RecordHint from "@/components/ui/hint/record-hint/RecordHint.vue";
 import PersonHint from "@/components/ui/hint/person-hint/PersonHint.vue";
 import DefaultLoader from "@/components/ui/loader/DefaultLoader.vue";
 import {useApplicationStore} from "@/store/application.store.ts";
+import {useInactivity} from "@/utils/useInactivity.ts";
 
 const router = useRouter()
 const dollStore = useDollStore()
 const applicationStore = useApplicationStore()
+const {inactivityTime} = useInactivity()
 const persons = ref(dollStore.getTargetTail()?.tail_persons)
 const loading = ref(true)
 
@@ -146,6 +148,7 @@ const initInteract = async () => {
 }
 
 onMounted(async () => {
+  inactivityTime()
   await initInteract()
   setTimeout(() => {
     loading.value = false
