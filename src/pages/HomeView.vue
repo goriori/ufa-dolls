@@ -12,6 +12,7 @@ import TailHint from "@/components/ui/hint/tail-hint/TailHint.vue";
 import BackgroundHint from "@/components/ui/hint/bakcground-hint/BackgroundHint.vue";
 import DefaultLoader from "@/components/ui/loader/DefaultLoader.vue";
 import {useApplicationStore} from "@/store/application.store.ts";
+import {useInactivity} from "@/utils/useInactivity.ts";
 
 enum STEP_APPLICATION {
   SET_TAIL,
@@ -21,6 +22,7 @@ enum STEP_APPLICATION {
 const router = useRouter()
 const dollsStore = useDollStore()
 const applicationStore = useApplicationStore()
+const {inactivityTime} = useInactivity()
 const loading = ref(true)
 const step = ref<STEP_APPLICATION>(STEP_APPLICATION.SET_TAIL)
 const tails = computed<Tail[]>(() => dollsStore.getTails())
@@ -88,6 +90,7 @@ const initTails = async () => {
 }
 
 onMounted(async () => {
+  inactivityTime()
   await initTails()
 })
 

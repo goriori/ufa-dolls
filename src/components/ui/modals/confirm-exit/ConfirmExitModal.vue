@@ -4,8 +4,6 @@ import Modal from "@/components/ui/modals/Modal.vue";
 import Button from "@/components/ui/button/Button.vue";
 import Cross from "@/components/ui/svg/Cross.vue";
 import ComeBack from "@/components/ui/svg/ComeBack.vue";
-import ArrowRight from "@/components/ui/svg/ArrowRight.vue";
-import NextStepVideo from "@/components/ui/svg/NextStepVideo.vue";
 import NextArrow from "@/components/ui/svg/NextArrow.vue";
 
 type MEmits = {

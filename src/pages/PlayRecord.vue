@@ -8,16 +8,14 @@ import SoundOn from "@/components/ui/svg/SoundOn.vue";
 import Delete from "@/components/ui/svg/Delete.vue";
 import Pause from "@/components/ui/svg/Pause.vue";
 import {useRoute, useRouter} from "vue-router";
-import {onMounted, onUnmounted, ref} from "vue";
+import {onMounted, ref} from "vue";
 import {RecorderService} from "@/API/RecorderService.ts";
 import Footer from "@/components/footer/Footer.vue";
 import {useApplicationStore} from "@/store/application.store.ts";
 import {formatTime} from "@/utils/helpers/formatTime.ts";
-import {useDollStore} from "@/store/dolls.store.ts";
 import {useInactivity} from "@/utils/useInactivity.ts";
 
 const applicationStore = useApplicationStore()
-const dollsStore = useDollStore()
 const router = useRouter()
 const route = useRoute()
 const {inactivityTime} = useInactivity()

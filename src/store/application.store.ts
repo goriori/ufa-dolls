@@ -4,6 +4,7 @@ import SuccessVideo from '@/components/modals/success/video/SuccessVideo.vue'
 import SuccessSend from '@/components/modals/success/send/SuccessSend.vue'
 import DeleteVideo from '@/components/modals/delete/video/DeleteVideo.vue'
 import ConfirmExit from "@/components/modals/confirm/exit/ConfirmExit.vue";
+import TailQuiz from "@/components/manuals/tail/TailQuiz.vue";
 
 type MItem = {
     name: string,
@@ -53,8 +54,17 @@ export const useApplicationStore = defineStore('application', () => {
         }
 
     ])
-
+    const manuals = ref([
+        {
+            name: 'tail',
+            component: shallowRef(TailQuiz),
+            settings: {
+                show: true
+            }
+        },
+    ])
     const getModals = () => modals.value
+    const getManuals = () => manuals.value
     const getSettings = (name: string) => {
         const modal = modals.value.find(modal => modal.name === name)
         if (modal) return modal.settings
@@ -68,6 +78,11 @@ export const useApplicationStore = defineStore('application', () => {
         if (!modal) return false
         modal.settings.show = !modal.settings.show
     }
+    const toggleManual = (name: string) => {
+        const manual = manuals.value.find(manual => manual.name === name)
+        if (!manual) return false
+        manual.settings.show = !manual.settings.show
+    }
     const setSettings = (name: string, settings: Object) => {
         const modal = modals.value.find(modal => modal.name === name)
         if (modal) Object.assign(modal.settings, settings)
@@ -76,11 +91,13 @@ export const useApplicationStore = defineStore('application', () => {
     return {
         modals,
         getModals,
+        getManuals,
         getSettings,
         getStateRecord,
         getStateLoading,
         toggleRecord,
         toggleModal,
+        toggleManual,
         toggleLoading,
         setSettings,
     }

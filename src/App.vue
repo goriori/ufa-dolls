@@ -3,10 +3,10 @@ import {useRoute} from 'vue-router'
 import {useApplicationStore} from "@/store/application.store.ts";
 import Modals from "@/components/modals/Modals.vue";
 import LoaderPage from "@/components/ui/loader/loader-page/LoaderPage.vue";
+import Manuals from "@/components/manuals/Manuals.vue";
 
 const route = useRoute()
 const applicationStore = useApplicationStore()
-
 </script>
 
 <template>
@@ -17,6 +17,9 @@ const applicationStore = useApplicationStore()
       </Transition>
       <Transition name="fade">
         <Modals/>
+      </Transition>
+      <Transition name="fade">
+        <Manuals/>
       </Transition>
       <transition name="fade-page" mode="out-in">
         <suspense>

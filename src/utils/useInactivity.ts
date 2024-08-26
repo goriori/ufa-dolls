@@ -1,8 +1,7 @@
-import {useRoute, useRouter} from 'vue-router'
+import {useRouter} from 'vue-router'
 
 export const useInactivity = () => {
     let timerId: number | undefined
-    const route = useRoute()
     const router = useRouter()
     const inactivityTime = () => {
         const resetTimer = () => {
@@ -15,10 +14,8 @@ export const useInactivity = () => {
             time++
             if (time >= timeout) {
                 resetTimer()
-                if (route.name !== 'home') {
-                    router.push({name: 'home'})
-                    clearInterval(timerId)
-                }
+                router.push({name: 'home'})
+                clearInterval(timerId)
             }
             console.log(timeout, time)
         }, 1000)
