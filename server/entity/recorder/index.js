@@ -49,6 +49,7 @@ class Recorder {
             '-f', `${process.env.VIDEO_CAPTURE_NAME}`,
             '-i', `audio=${process.env.AUDIO_CAPTURE_NAME}`,
             '-vcodec', 'libx264',
+            '-rtbufsize', '2000M',
             '-acodec', 'aac',
             '-pix_fmt', 'yuv420p',
             '-crf', '23',
