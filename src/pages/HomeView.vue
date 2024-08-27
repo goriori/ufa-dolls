@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import {useRouter} from "vue-router";
-import {computed, ComputedRef, onMounted, ref} from "vue";
+import {computed, ComputedRef, onMounted, onUnmounted, ref} from "vue";
 import {useDollStore} from "@/store/dolls.store.ts";
 import {TailService} from "@/API/TailService.ts";
 import {Tail, Background, TBackground} from "@/entities/fairy-tale";
@@ -13,6 +13,7 @@ import BackgroundHint from "@/components/ui/hint/bakcground-hint/BackgroundHint.
 import DefaultLoader from "@/components/ui/loader/DefaultLoader.vue";
 import {useApplicationStore} from "@/store/application.store.ts";
 import {useInactivity} from "@/utils/useInactivity.ts";
+import {useCacheImages} from "@/utils/useCacheImages.ts";
 
 enum STEP_APPLICATION {
   SET_TAIL,
@@ -23,6 +24,7 @@ const router = useRouter()
 const dollsStore = useDollStore()
 const applicationStore = useApplicationStore()
 const {inactivityTime} = useInactivity()
+const timerInactivityId = ref<number | null>(null)
 const loading = ref(true)
 const step = ref<STEP_APPLICATION>(STEP_APPLICATION.SET_TAIL)
 const tails = computed<Tail[]>(() => dollsStore.getTails())
@@ -89,9 +91,24 @@ const initTails = async () => {
   setTimeout(() => loading.value = false, 2000)
 }
 
+const loadCacheImages = async () => {
+  const tails = dollsStore.getTails()
+  const tail_previews = tails.map(tail => window.API + tail.tail_preview)
+  const tail_backgrounds = tails.map(tail => tail.tail_backgrounds.map(background => window.API + background.image)).flat(Infinity)
+  const tail_persons = tails.map(tail => tail.tail_persons.map(person => window.API + person.person_image)).flat(Infinity)
+  useCacheImages(tail_previews as string[])
+  useCacheImages(tail_backgrounds as string[])
+  useCacheImages(tail_persons as string[])
+}
+
 onMounted(async () => {
-  inactivityTime()
+  timerInactivityId.value = inactivityTime()
   await initTails()
+  await loadCacheImages()
+})
+
+onUnmounted(() => {
+  if (timerInactivityId.value) clearInterval(timerInactivityId.value)
 })
 
 </script>

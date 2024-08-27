@@ -23,6 +23,7 @@ const onClick = () => emits('onClick')
     <template #card-center>
       <img
           :src="server_url+image || 'https://furman.top/uploads/posts/2022-06/1654264327_11-furman-top-p-novogodnii-kotik-art-krasivo-oboi-11.jpg'"
+          loading="lazy"
           alt="preview">
     </template>
     <template #card-bottom>

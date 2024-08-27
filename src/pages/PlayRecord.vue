@@ -8,7 +8,7 @@ import SoundOn from "@/components/ui/svg/SoundOn.vue";
 import Delete from "@/components/ui/svg/Delete.vue";
 import Pause from "@/components/ui/svg/Pause.vue";
 import {useRoute, useRouter} from "vue-router";
-import {onMounted, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import {RecorderService} from "@/API/RecorderService.ts";
 import Footer from "@/components/footer/Footer.vue";
 import {useApplicationStore} from "@/store/application.store.ts";
@@ -19,6 +19,7 @@ const applicationStore = useApplicationStore()
 const router = useRouter()
 const route = useRoute()
 const {inactivityTime} = useInactivity()
+const timerInactivityId = ref<number | null>(null)
 const recordTail = ref<HTMLVideoElement | null>(null)
 const durationTime = ref<string | undefined>('00:00')
 const duration = ref<number | undefined>(0)
@@ -75,7 +76,7 @@ const onUpdateProgressVideoPlay = () => {
   }
 }
 onMounted(async () => {
-  inactivityTime()
+  timerInactivityId.value = inactivityTime()
   const videoName = route.params.videoName
   if (recordTail.value) {
     const videoLoaded = await RecorderService.getRecord(videoName as string);
@@ -90,6 +91,9 @@ onMounted(async () => {
       await router.push('/')
     }
   }
+})
+onUnmounted(() => {
+  if (timerInactivityId.value) clearInterval(timerInactivityId.value)
 })
 </script>
 

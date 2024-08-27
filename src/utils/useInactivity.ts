@@ -1,7 +1,6 @@
 import {useRouter} from 'vue-router'
 
 export const useInactivity = () => {
-    let timerId: number | undefined
     const router = useRouter()
     const inactivityTime = () => {
         const resetTimer = () => {
@@ -9,7 +8,7 @@ export const useInactivity = () => {
         }
         let time = 0
 
-        timerId = setInterval(() => {
+        const timerId = setInterval(() => {
             const timeout = window.TIMEOUT
             time++
             if (time >= timeout) {
@@ -23,7 +22,8 @@ export const useInactivity = () => {
         document.addEventListener('mousemove', resetTimer)
         document.addEventListener('keypress', resetTimer)
         document.addEventListener('touch', resetTimer)
+        return timerId
     }
 
-    return {inactivityTime, timerId}
+    return {inactivityTime}
 }

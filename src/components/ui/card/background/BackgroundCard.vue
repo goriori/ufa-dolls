@@ -20,6 +20,7 @@ const onClick = () => emits('onClick')
     <template #card-center>
       <img
           :src="server_url+preview"
+          loading="lazy"
           alt="preview">
     </template>
   </Card>

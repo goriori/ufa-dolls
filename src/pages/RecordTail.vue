@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onBeforeUnmount, onMounted, ref} from "vue";
+import {computed, onBeforeUnmount, onMounted, onUnmounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import {useDollStore} from "@/store/dolls.store.ts";
 import {Person} from "@/entities/fairy-tale";
@@ -17,6 +17,7 @@ const router = useRouter()
 const dollStore = useDollStore()
 const applicationStore = useApplicationStore()
 const {inactivityTime} = useInactivity()
+const timerInactivityId = ref<number | null>(null)
 const persons = ref(dollStore.getTargetTail()?.tail_persons)
 const loading = ref(true)
 
@@ -148,7 +149,7 @@ const initInteract = async () => {
 }
 
 onMounted(async () => {
-  inactivityTime()
+  timerInactivityId.value = inactivityTime()
   await initInteract()
   setTimeout(() => {
     loading.value = false
@@ -160,6 +161,10 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   initPositionPersons()
   onUnsetTargetPersons()
+})
+
+onUnmounted(() => {
+  if (timerInactivityId.value) clearInterval(timerInactivityId.value)
 })
 </script>
 
