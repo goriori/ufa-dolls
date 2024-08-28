@@ -1,8 +1,10 @@
 <script setup lang="ts">
 
+import {AlertMessageTypes} from "@/store/application.store.ts";
+
 type AProps = {
   message: string
-  type: 'error' | 'warning' | 'info'
+  type: AlertMessageTypes
 }
 defineProps<AProps>()
 </script>

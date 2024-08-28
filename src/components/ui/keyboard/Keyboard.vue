@@ -135,7 +135,7 @@ const onPressKey = (key: string) => {
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    font-family: OpenSans, serif;
+    font-family: Arial, serif;
     background-color: rgba(255, 255, 255, 1);
     color: #000;
     font-weight: 500;

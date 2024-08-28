@@ -17,7 +17,7 @@ type MSettings = {
     targetVideo?: string,
     show: boolean
 }
-
+export type AlertMessageTypes = 'info' | 'error' | 'warning'
 export const useApplicationStore = defineStore('application', () => {
     const loading = ref<boolean>(false)
     const record = ref<boolean>(false)
