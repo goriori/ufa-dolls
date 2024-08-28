@@ -56,6 +56,7 @@ const onChangePositionPerson = (x: number, y: number, transform: string, person_
 const onRecord = () => {
   stateRecord.value = true
   applicationStore.toggleRecord()
+  stopInactivityTimer()
   setTimeout(async () => {
     await RecorderService.playRecordScreen(getParamsAreaRecord())
     recordTimer.value = onStartTimerRecord()
@@ -81,12 +82,15 @@ const onStopTimerRecord = () => {
 }
 
 const onStop = async () => {
-  applicationStore.toggleRecord()
-  applicationStore.toggleLoading()
   const {name} = await RecorderService.stopRecordScreen()
   applicationStore.toggleLoading()
-  onStopTimerRecord()
-  await router.push(`/play/record/${name}`)
+  setTimeout(async () => {
+    stateRecord.value = false
+    applicationStore.toggleRecord()
+    applicationStore.toggleLoading()
+    onStopTimerRecord()
+    await router.push(`/play/record/${name}`)
+  }, 2000)
 }
 
 
@@ -117,6 +121,10 @@ const initPositionPersons = async () => {
           if (width && height) person.initPosition(width, height)
         })
       })
+}
+
+const stopInactivityTimer = () => {
+  if (timerInactivityId.value) clearInterval(timerInactivityId.value)
 }
 
 const initInteract = async () => {
@@ -164,7 +172,7 @@ onBeforeUnmount(() => {
 })
 
 onUnmounted(() => {
-  if (timerInactivityId.value) clearInterval(timerInactivityId.value)
+  stopInactivityTimer()
 })
 </script>
 
@@ -226,7 +234,8 @@ onUnmounted(() => {
       </div>
     </template>
     <Transition name="fade">
-      <Footer v-if="!loading" @on-to-main="onToMain" @on-record="onRecord" @on-stop="onStop"/>
+      <Footer v-if="!loading" :state-record="stateRecord" @on-to-main="onToMain" @on-record="onRecord"
+              @on-stop="onStop"/>
     </Transition>
   </div>
 </template>

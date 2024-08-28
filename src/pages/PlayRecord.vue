@@ -43,7 +43,7 @@ const onNextStep = () => {
   }
 }
 const onBackStep = () => {
-  if (recordTail.value?.currentTime && recordTail?.value.currentTime > 10) {
+  if (recordTail.value?.currentTime) {
     recordTail.value.currentTime -= 10
   }
 }
@@ -59,14 +59,14 @@ const onToMain = () => {
 }
 
 const onNext = () => {
-  applicationStore.setSettings('success-video', {
+  applicationStore.setSettingsModal('success-video', {
     targetVideo: recordTail.value?.src,
     videoName: route.params.videoName
   })
   applicationStore.toggleModal('success-video')
 }
 const onDelete = () => {
-  applicationStore.setSettings('delete-video', {videoName: route.params.videoName})
+  applicationStore.setSettingsModal('delete-video', {videoName: route.params.videoName})
   applicationStore.toggleModal('delete-video')
 }
 
@@ -105,6 +105,7 @@ onUnmounted(() => {
             ref="recordTail"
             alt=""
             @timeupdate="onUpdateProgressVideoPlay"
+            @ended="play = !play"
         >
 
         </video>

@@ -1,11 +1,15 @@
 <script setup lang="ts">
 
-import {useRouter} from "vue-router";
+import { useRouter} from "vue-router";
 import {computed, ref} from "vue";
 import {useApplicationStore} from "@/store/application.store.ts";
 import RecordButton from "@/components/ui/button/record-button/RecordButton.vue";
 import ToMainButton from "@/components/ui/button/to-main-button/ToMainButton.vue";
 import NextButton from "@/components/ui/button/next-button/NextButton.vue";
+
+type FProps = {
+  stateRecord?: boolean
+}
 
 type FEmits = {
   (eventName: 'onNext'): void
@@ -16,11 +20,15 @@ type FEmits = {
 
 const router = useRouter()
 const applicationStore = useApplicationStore()
+const props = defineProps<FProps>()
 const emits = defineEmits<FEmits>()
 const namePage = ref(router.currentRoute.value.name)
 const recordState = computed(() => applicationStore.getStateRecord())
 const onNext = () => emits('onNext')
-const onToMain = () => emits('onToMain')
+const onToMain = () => {
+  if (props.stateRecord) return
+  emits('onToMain')
+}
 const onRecord = () => emits('onRecord')
 const onStop = () => emits('onStop')
 

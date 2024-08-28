@@ -22,6 +22,7 @@ export type Form = {
 }
 
 type MEmits = {
+  (eventName: 'onInvalidEmail'): void
   (eventName: 'onSendEmail', form: Form): void
   (eventName: 'onToMain'): void
 }
@@ -45,7 +46,7 @@ const onBackspace = (field: keyof Form) => {
   form.value[field].value = form.value[field].value.slice(0, form.value[field].value.length - 1)
 }
 const onSendEmail = () => {
-  if (!emailTest(form.value.email.value)) return
+  if (!emailTest(form.value.email.value)) return emits('onInvalidEmail')
   emits('onSendEmail', form.value)
 }
 

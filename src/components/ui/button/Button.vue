@@ -42,6 +42,10 @@ defineProps<BProps>()
   color: #fff;
   background-color: transparent;
   border-radius: 20px;
+
+  &:disabled {
+    opacity: 0.5;
+  }
 }
 
 .btn-icon {

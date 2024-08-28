@@ -89,7 +89,8 @@ const onPressKey = (key: string) => {
       <div
           v-for="key in row" :key="key"
           :class="['keyboard__btn',{
-             space:key === 'space'
+             space:key === 'space',
+             setting:key === '<=' || key === '&123' || key === 'Enter' || key === 'ENG'
            }]"
           @click="onPressKey(key)"
           v-ripple
@@ -143,11 +144,11 @@ const onPressKey = (key: string) => {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 16px;
+    border-radius: 17px;
 
     @media (max-width: $md4k + px) {
-      width: 150px;
-      height: 150px;
+      width: 96px;
+      height: 96px;
       font-size: 32px;
     }
     @media (max-width: $md0 + px) {
@@ -163,6 +164,10 @@ const onPressKey = (key: string) => {
     &.space {
       width: 100%;
       max-width: 1024px;
+    }
+
+    &.setting {
+      width: 184px;
     }
   }
 }

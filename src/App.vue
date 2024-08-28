@@ -4,6 +4,7 @@ import {useApplicationStore} from "@/store/application.store.ts";
 import Modals from "@/components/modals/Modals.vue";
 import LoaderPage from "@/components/ui/loader/loader-page/LoaderPage.vue";
 import Manuals from "@/components/manuals/Manuals.vue";
+import Alerts from "@/components/alerts/Alerts.vue";
 
 const route = useRoute()
 const applicationStore = useApplicationStore()
@@ -14,6 +15,9 @@ const applicationStore = useApplicationStore()
     <template v-if="Component">
       <Transition name="fade">
         <LoaderPage v-if="applicationStore.getStateLoading()"/>
+      </Transition>
+      <Transition name="fade">
+        <Alerts/>
       </Transition>
       <Transition name="fade">
         <Modals/>

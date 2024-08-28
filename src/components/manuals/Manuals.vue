@@ -8,7 +8,7 @@ const manuals = computed(() => applicationStore.getManuals())
 </script>
 
 <template>
-  <section class="modals">
+  <section class="manuals">
     <template v-for="manual in manuals" :key="manual.name">
       <Transition name="fade">
         <component v-if="manual.settings.show" :is="manual.component"/>

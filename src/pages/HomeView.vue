@@ -62,10 +62,17 @@ const toMain = () => {
 }
 
 const onNext = () => {
-  if (!targetTail.value) return flashingCard(tails)
-  step.value = STEP_APPLICATION.SET_BACKGROUND
-  if (!targetBackground.value) return flashingCard(backgrounds)
-  else return router.push('/record/tail')
+  switch (step.value) {
+    case STEP_APPLICATION.SET_TAIL:
+      if (!targetTail.value) return flashingCard(tails)
+      step.value = STEP_APPLICATION.SET_BACKGROUND
+      break;
+    case STEP_APPLICATION.SET_BACKGROUND:
+      if (!targetBackground.value) return flashingCard(backgrounds)
+      else return router.push('/record/tail')
+    default:
+      break;
+  }
 }
 
 const flashingCard = (cards: ComputedRef<TBackground[]> | ComputedRef<Tail[]>) => {

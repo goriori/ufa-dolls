@@ -1,7 +1,5 @@
-import {useRouter} from 'vue-router'
-
 export const useInactivity = () => {
-    const router = useRouter()
+    const redirectPage = window.HOME
     const inactivityTime = () => {
         const resetTimer = () => {
             time = 0
@@ -13,7 +11,7 @@ export const useInactivity = () => {
             time++
             if (time >= timeout) {
                 resetTimer()
-                router.push({name: 'home'})
+                window.location.href = redirectPage
                 clearInterval(timerId)
             }
             console.log(timeout, time)

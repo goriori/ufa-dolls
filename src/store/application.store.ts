@@ -5,6 +5,7 @@ import SuccessSend from '@/components/modals/success/send/SuccessSend.vue'
 import DeleteVideo from '@/components/modals/delete/video/DeleteVideo.vue'
 import ConfirmExit from "@/components/modals/confirm/exit/ConfirmExit.vue";
 import TailQuiz from "@/components/manuals/tail/TailQuiz.vue";
+import Alert from "@/components/ui/alert/Alert.vue";
 
 type MItem = {
     name: string,
@@ -20,6 +21,17 @@ type MSettings = {
 export const useApplicationStore = defineStore('application', () => {
     const loading = ref<boolean>(false)
     const record = ref<boolean>(false)
+    const alerts = ref([
+        {
+            name: 'message',
+            component: shallowRef(Alert),
+            settings: {
+                message: 'information',
+                type: 'info',
+                show: false
+            }
+        }
+    ])
     const modals = ref<MItem[]>([
         {
             name: 'success-video',
@@ -63,6 +75,8 @@ export const useApplicationStore = defineStore('application', () => {
             }
         },
     ])
+
+    const getAlerts = () => alerts.value
     const getModals = () => modals.value
     const getManuals = () => manuals.value
     const getSettings = (name: string) => {
@@ -73,34 +87,66 @@ export const useApplicationStore = defineStore('application', () => {
     const getStateRecord = () => record.value
     const toggleLoading = () => loading.value = !loading.value
     const toggleRecord = () => record.value = !record.value
-    const toggleModal = (name: string) => {
-        const modal = modals.value.find(modal => modal.name === name)
-        if (!modal) return false
-        modal.settings.show = !modal.settings.show
+    const toggleAlert = (name: string) => toggleEntity('alerts', name)
+    const toggleModal = (name: string) => toggleEntity('modals', name)
+    const toggleManual = (name: string) => toggleEntity('manuals', name)
+    const setSettingsModal = (name: string, settings: Object) => setSettingEntity('modals', name, settings)
+    const setSettingAlert = (name: string, settings: Object) => setSettingEntity('alerts', name, settings)
+
+    const toggleEntity = (entity: 'alerts' | 'modals' | 'manuals', name: string) => {
+        let element = null
+        switch (entity) {
+            case "alerts":
+                element = alerts.value.find(alert => alert.name === name)
+                break;
+            case "manuals":
+                element = manuals.value.find(manual => manual.name === name)
+                break;
+            case "modals":
+                element = modals.value.find(modal => modal.name === name)
+                break;
+            default:
+                break;
+        }
+        if (!element) return false
+        element.settings.show = !element.settings.show
     }
-    const toggleManual = (name: string) => {
-        const manual = manuals.value.find(manual => manual.name === name)
-        if (!manual) return false
-        manual.settings.show = !manual.settings.show
-    }
-    const setSettings = (name: string, settings: Object) => {
-        const modal = modals.value.find(modal => modal.name === name)
-        if (modal) Object.assign(modal.settings, settings)
+    const setSettingEntity = (entity: 'alerts' | 'modals' | 'manuals', name: string, setting: Object) => {
+        let element = null
+        switch (entity) {
+            case "alerts":
+                element = alerts.value.find(alert => alert.name === name)
+                break;
+            case "manuals":
+                element = manuals.value.find(manual => manual.name === name)
+                break;
+            case "modals":
+                element = modals.value.find(modal => modal.name === name)
+                break;
+            default:
+                break;
+        }
+        if (element) Object.assign(element.settings, setting)
     }
 
     return {
         modals,
+        getAlerts,
         getModals,
         getManuals,
         getSettings,
         getStateRecord,
         getStateLoading,
         toggleRecord,
+        toggleAlert,
         toggleModal,
         toggleManual,
         toggleLoading,
-        setSettings,
+        setSettingsModal,
+        setSettingAlert,
     }
 })
+
+
 
 
