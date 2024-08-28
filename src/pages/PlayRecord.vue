@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import {useRoute, useRouter} from "vue-router";
+import {onMounted, onUnmounted, ref} from "vue";
+import {useApplicationStore} from "@/store/application.store.ts";
+import {formatTime} from "@/utils/helpers/formatTime.ts";
+import {useInactivity} from "@/utils/useInactivity.ts";
+import {RecorderService} from "@/API/RecorderService.ts";
 import Button from "@/components/ui/button/Button.vue";
 import BackStepVideo from "@/components/ui/svg/BackStepVideo.vue";
 import Play from "@/components/ui/svg/Play.vue";
@@ -7,13 +13,7 @@ import SoundOff from "@/components/ui/svg/SoundOff.vue";
 import SoundOn from "@/components/ui/svg/SoundOn.vue";
 import Delete from "@/components/ui/svg/Delete.vue";
 import Pause from "@/components/ui/svg/Pause.vue";
-import {useRoute, useRouter} from "vue-router";
-import {onMounted, onUnmounted, ref} from "vue";
-import {RecorderService} from "@/API/RecorderService.ts";
 import Footer from "@/components/footer/Footer.vue";
-import {useApplicationStore} from "@/store/application.store.ts";
-import {formatTime} from "@/utils/helpers/formatTime.ts";
-import {useInactivity} from "@/utils/useInactivity.ts";
 
 const applicationStore = useApplicationStore()
 const router = useRouter()

@@ -16,6 +16,7 @@ type MProps = {
 export type Form = {
   email: {
     ref: HTMLInputElement | null
+    state: 'default' | 'success' | 'error'
     value: string
     focus: boolean
   }
@@ -30,6 +31,7 @@ type MEmits = {
 const form = ref<Form>({
   email: {
     ref: null,
+    state: 'default',
     value: '',
     focus: false
   },
@@ -46,8 +48,12 @@ const onBackspace = (field: keyof Form) => {
   form.value[field].value = form.value[field].value.slice(0, form.value[field].value.length - 1)
 }
 const onSendEmail = () => {
-  if (!emailTest(form.value.email.value)) return emits('onInvalidEmail')
-  emits('onSendEmail', form.value)
+  if (!emailTest(form.value.email.value)) {
+    form.value.email.state = 'error'
+    return emits('onInvalidEmail')
+  }
+  form.value.email.state = 'success'
+  return emits('onSendEmail', form.value)
 }
 
 const onToMain = () => emits('onToMain')
@@ -62,14 +68,18 @@ const onToMain = () => emits('onToMain')
         </section>
         <section class="window-center">
           <video class="video" :src="videoSrc"></video>
-          <Input
-              v-model="form.email.value"
-              type="email"
-              placeholder="Адрес электронной почты"
-              color="secondary"
-              class="inpt"
-              @focus="form.email.focus = true"
-          />
+          <div class="input">
+            <Input
+                v-model="form.email.value"
+                type="email"
+                placeholder="Адрес электронной почты"
+                color="secondary"
+                class="inpt"
+                :state="form.email.state"
+                @focus="form.email.focus = true"
+            />
+            <p v-if="form.email.state === 'error'" class="input-error">Введите корректный адрес электронной почты</p>
+          </div>
           <Transition name="fade">
             <Keyboard v-if="form.email.focus" @on-enter="form.email.focus = false"
                       @on-press="(key:string)=> onPressKey('email', key)"
@@ -114,14 +124,6 @@ const onToMain = () => emits('onToMain')
   justify-content: center;
 }
 
-.cross {
-  cursor: pointer;
-  transition: 0.3s all ease-in-out;
-
-  &:active {
-    transform: scale(0.9);
-  }
-}
 
 hr {
   background: linear-gradient(rgba(70, 34, 157, 0), rgba(255, 255, 255, 1), rgba(70, 34, 157, 0));
@@ -134,12 +136,14 @@ hr {
 .window-center {
   margin-top: 150px;
   color: #ffffff;
-  font-size: 100px;
+  font-size: 30px;
   font-weight: 600;
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 80px;
+
+
 }
 
 .window-bottom {
@@ -163,6 +167,18 @@ hr {
   border-radius: 40px;
   border: 10px solid white;
   object-fit: cover;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+
+  .input-error {
+    text-align: left;
+    color: #ea3c41;
+  }
 }
 
 .btn {

@@ -4,6 +4,7 @@ import {computed} from "vue";
 type IProps = {
   type: 'text' | 'number' | 'phone' | 'email' | 'password' | 'search',
   color: 'primary' | 'secondary' | 'thridy'
+  state: 'success' | 'error' | 'default'
   text_position?: 'left' | 'center' | 'right'
   modelValue?: string | number
   placeholder?: string,
@@ -22,14 +23,14 @@ const emits = defineEmits<IEmits>()
 const modelValue = computed(() => props.modelValue)
 
 const onChange = (event: Event) => {
-  const newValue =  (event.target as HTMLInputElement).value
+  const newValue = (event.target as HTMLInputElement).value
   emits('update:modelValue', newValue)
-  emits('onChange',newValue)
+  emits('onChange', newValue)
 
 }
 
 const onInput = (event: Event) => {
-  const newValue =  (event.target as HTMLInputElement).value
+  const newValue = (event.target as HTMLInputElement).value
   emits('update:modelValue', newValue)
   emits('onInput', newValue)
 }
@@ -40,7 +41,7 @@ const onInput = (event: Event) => {
       :type="type"
       :placeholder="placeholder"
       :disabled="disabled"
-      :class="['input', text_position, color]"
+      :class="['input', text_position, color, state]"
       required
       :value="modelValue"
       @change="onChange"
@@ -109,5 +110,13 @@ const onInput = (event: Event) => {
 
 .thridy {
   background-color: var(--thridy-input-color);
+}
+
+.success {
+  border-color: #26d00b;
+}
+
+.error {
+  border-color: #ea3c41;
 }
 </style>
