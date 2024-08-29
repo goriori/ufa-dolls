@@ -40,6 +40,10 @@ defineProps<MProps>()
 const emits = defineEmits<MEmits>()
 const {emailTest} = useRegular()
 
+const onFocusField = (event: Event) => {
+  form.value.email.focus = true
+}
+
 const onPressKey = (field: keyof Form, value: string) => {
   console.log(field, value, form.value)
   form.value[field].value += value
@@ -62,7 +66,7 @@ const onToMain = () => emits('onToMain')
 <template>
   <Modal>
     <template #window>
-      <div class="window">
+      <div class="window" v-outside="()=> form.email.focus = false">
         <section class="window-top">
           <SuccessVideo/>
         </section>
@@ -76,14 +80,15 @@ const onToMain = () => emits('onToMain')
                 color="secondary"
                 class="inpt"
                 :state="form.email.state"
-                @focus="form.email.focus = true"
+                @focus="onFocusField"
             />
             <p v-if="form.email.state === 'error'" class="input-error">Введите корректный адрес электронной почты</p>
           </div>
           <Transition name="fade">
-            <Keyboard v-if="form.email.focus" @on-enter="form.email.focus = false"
+            <Keyboard v-if="form.email.focus" @focusout="form.email.focus = false" @on-enter="form.email.focus = false"
                       @on-press="(key:string)=> onPressKey('email', key)"
                       @on-backspace="onBackspace('email')"
+
             />
           </Transition>
 

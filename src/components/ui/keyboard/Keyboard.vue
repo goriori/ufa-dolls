@@ -11,15 +11,15 @@ type KEmits = {
 const keysRu = ref([
   ["й", "ц", "у", "к", "е", "н", "г", "ш", 'щ', "з", "х", "ъ", "<="],
   ["ф", "ы", "в", "а", "п", "р", "о", "л", 'д', "ж", "э", "Enter"],
-  ["&123", 'shift', "я", "ч", "с", "м", "и", "т", "ь", 'б', "ю", ".", 'ENG'],
+  ['shift', "я", "ч", "с", "м", "и", "т", "ь", 'б', "ю", ".", 'ENG'],
   ['space']
 ])
 
 const keysEn = ref([
-  ["q", "w", "e", "r", "t", "y", "u", "i", 'o', "p", "[", "]", "<="],
-  ["a", "s", "d", "f", "g", "h", "j", "k", 'l', ";", "'", "Enter"],
-  ["&123", 'shift', "z", "x", "c", "v", "b", "n", "m", ',', ".", "/", 'RU'],
-  ['space']
+  ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '_', "<="],
+  ["q", "w", "e", "r", "t", "y", "u", "i", 'o', "p", "@",],
+  ["a", "s", "d", "f", "g", "h", "j", "k", 'l', "Enter"],
+  ['shift', "z", "x", "c", "v", "b", "n", "m", ',', "."],
 ])
 
 const keyNums = ref([
@@ -29,7 +29,7 @@ const keyNums = ref([
   ['ABC', '0', '<=', '_', '=', ')']
 ])
 
-const lang = ref<string>('RU')
+const lang = ref<string>('ENG')
 const shift = ref<boolean>(false)
 
 const targetKeys = computed(() => {
@@ -59,9 +59,6 @@ const onPressKey = (key: string) => {
     case 'RU':
       changeLanguage('RU')
       break;
-    case '&123':
-      changeLanguage('&123')
-      break;
     case 'ABC':
       changeLanguage('RU')
       break;
@@ -90,7 +87,7 @@ const onPressKey = (key: string) => {
           v-for="key in row" :key="key"
           :class="['keyboard__btn',{
              space:key === 'space',
-             setting:key === '<=' || key === '&123' || key === 'Enter' || key === 'ENG'
+             setting:key === '<=' || key === '&123' || key === 'Enter' || key === 'ENG' || key === 'shift'
            }]"
           @click="onPressKey(key)"
           v-ripple
