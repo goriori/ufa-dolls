@@ -19,7 +19,8 @@ const onToMain = () => {
   targetTail?.setTargetBackground(null)
   dollsStore.setTargetTail(null)
   onClose()
-  if (window.HOME) window.location.href = window.HOME
+  const homePath = window.HOME
+  if (homePath) window.location.href = window.HOME
   else router.push('/')
 }
 </script>
