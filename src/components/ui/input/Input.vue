@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed} from "vue";
+import {computed, onMounted, ref} from "vue";
 
 type IProps = {
   type: 'text' | 'number' | 'phone' | 'email' | 'password' | 'search',
@@ -14,12 +14,13 @@ type IProps = {
 
 type IEmits = {
   (eventName: 'update:modelValue', value: string): void,
+  (eventName: 'onMount', element: HTMLInputElement): void
   (eventName: 'onChange', value: string | number): void,
   (eventName: 'onInput', value: string | number): void
 }
 const props = defineProps<IProps>()
 const emits = defineEmits<IEmits>()
-
+const inputRef = ref<HTMLInputElement | null>(null)
 const modelValue = computed(() => props.modelValue)
 
 const onChange = (event: Event) => {
@@ -29,23 +30,36 @@ const onChange = (event: Event) => {
 
 }
 
+const onFocus = () => {
+  const startPos = (inputRef.value as HTMLInputElement).selectionStart
+  console.log(startPos)
+}
+
 const onInput = (event: Event) => {
   const newValue = (event.target as HTMLInputElement).value
   emits('update:modelValue', newValue)
   emits('onInput', newValue)
 }
+onMounted(() => {
+  if (inputRef.value) {
+    console.log(inputRef.value)
+    emits('onMount', inputRef.value)
+  }
+})
 </script>
 
 <template>
   <input
+      ref="inputRef"
       :type="type"
       :placeholder="placeholder"
       :disabled="disabled"
       :class="['input', text_position, color, state]"
-      required
       :value="modelValue"
+      @focus="onFocus"
       @change="onChange"
       @input="onInput"
+      :required="required"
   >
 </template>
 

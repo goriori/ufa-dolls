@@ -23,7 +23,7 @@ const applicationStore = useApplicationStore()
         <Modals/>
       </Transition>
       <Transition name="fade">
-        <Manuals/>
+        <Manuals v-if="route.name === 'home'"/>
       </Transition>
       <transition name="fade-page" mode="out-in">
         <suspense>

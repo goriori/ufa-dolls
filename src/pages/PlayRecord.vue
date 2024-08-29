@@ -6,9 +6,9 @@ import {formatTime} from "@/utils/helpers/formatTime.ts";
 import {useInactivity} from "@/utils/useInactivity.ts";
 import {RecorderService} from "@/API/RecorderService.ts";
 import Button from "@/components/ui/button/Button.vue";
-import BackStepVideo from "@/components/ui/svg/BackStepVideo.vue";
+// import BackStepVideo from "@/components/ui/svg/BackStepVideo.vue";
 import Play from "@/components/ui/svg/Play.vue";
-import NextStepVideo from "@/components/ui/svg/NextStepVideo.vue";
+// import NextStepVideo from "@/components/ui/svg/NextStepVideo.vue";
 import SoundOff from "@/components/ui/svg/SoundOff.vue";
 import SoundOn from "@/components/ui/svg/SoundOn.vue";
 import Delete from "@/components/ui/svg/Delete.vue";
@@ -37,16 +37,16 @@ const onPause = () => {
   play.value = false
 }
 
-const onNextStep = () => {
-  if (recordTail.value?.currentTime) {
-    recordTail.value.currentTime += 10
-  }
-}
-const onBackStep = () => {
-  if (recordTail.value?.currentTime) {
-    recordTail.value.currentTime -= 10
-  }
-}
+// const onNextStep = () => {
+//   if (recordTail.value?.currentTime) {
+//     recordTail.value.currentTime += 10
+//   }
+// }
+// const onBackStep = () => {
+//   if (recordTail.value?.currentTime) {
+//     recordTail.value.currentTime -= 10
+//   }
+// }
 const onMuted = () => {
   if (recordTail.value) {
     recordTail.value.muted = !recordTail.value.muted;
@@ -116,10 +116,10 @@ onUnmounted(() => {
         <div class="video-actions">
           <div class="left"></div>
           <div class="center">
-            <Button class="btn" color="primary" :icon="BackStepVideo" @click="onBackStep"/>
+<!--            <Button class="btn" color="primary" :icon="BackStepVideo" @click="onBackStep"/>-->
             <Button class="btn" v-if="!play" color="primary" :icon="Play" @click="onPlay"/>
             <Button class="btn" v-else color="primary" :icon="Pause" @click="onPause"/>
-            <Button class="btn" color="primary" :icon="NextStepVideo" @click="onNextStep"/>
+<!--            <Button class="btn" color="primary" :icon="NextStepVideo" @click="onNextStep"/>-->
           </div>
           <div class="right">
             <Button class="btn" v-if="sound" color="primary" :icon="SoundOff" @click="onMuted"/>

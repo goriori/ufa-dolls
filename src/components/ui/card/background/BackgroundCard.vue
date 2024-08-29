@@ -48,7 +48,8 @@ const onClick = () => emits('onClick')
 
 img {
   width: 100%;
-  height: 100%;
+  height: 680px;
+  object-fit: cover;
   border-radius: 60px;
 }
 

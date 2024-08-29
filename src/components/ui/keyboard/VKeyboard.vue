@@ -1,58 +1,132 @@
-<script setup lang="ts">
-import {ref} from 'vue'
+<script setup>
+import { ref, watch } from 'vue'
 
-defineProps({
+const props = defineProps({
+  string: {
+    type: String,
+    default: '',
+    required: true,
+  },
   isOpen: {
     type: Boolean,
     default: false,
+  },
+  inputRef: {
+    type: Object,
   },
   type: {
     type: String,
     default: null,
   },
 })
-const isShiftActive = ref(false)
-const lang = ref('en')
-const emits = defineEmits(['update:isOpen', 'onPressKey', 'onPressBackspace', 'onEnter'])
 
+const isShiftActive = ref(props.type !== 'email')
+const isTyped = ref(true)
 
+const lang = ref('ru')
+const emits = defineEmits(['update:isOpen', 'update:string', 'handleClick'])
 
-const onPressKey = (key: string) => {
-  emits('onPressKey', `${key}`)
+const onInput = (e) => {
+  console.log(props.inputRef)
+  props.inputRef.input.focus()
+  const startPos = props.inputRef.input.selectionStart
+  const endPos = props.inputRef.input.selectionEnd
+  const text = props.string
+  isTyped.value = false
+
+  let newText = ''
+  const inputChar = isShiftActive.value ? e.toUpperCase() : e.toLowerCase()
+  newText = text.substring(0, startPos) + inputChar + text.substring(endPos)
+
+  emits('update:string', `${newText}`)
+  setTimeout(() => {
+    props.inputRef.input.setSelectionRange(startPos + 1, startPos + 1)
+  }, 0)
+
+  // Деактивация Shift после первой буквы
+  if (newText.length === 1 && props.type !== 'email') {
+    isShiftActive.value = false
+  }
 }
 
 const backspace = () => {
-  emits('onPressBackspace')
+  props.inputRef.input.focus()
+  const startPos = props.inputRef.input.selectionStart
+  const text = props.string
+
+  let newText = ''
+  const end = text.substring(startPos)
+  newText = text.slice(0, startPos - 1) + end
+
+  emits('update:string', `${newText}`)
+  setTimeout(() => {
+    props.inputRef.input.setSelectionRange(startPos - 1, startPos - 1)
+  }, 0)
+
+  // Активируем Shift, если после backspace строка пуста
+  if (newText === '') {
+    isShiftActive.value = props.type !== 'email'
+  }
+}
+
+const enter = () => {
+  props.inputRef.input.blur()
+  emits('handleClick')
+  close()
+}
+
+const clearInput = () => {
+  emits('update:string', '')
+  isShiftActive.value = props.type !== 'email'
 }
 
 const shift = () => {
+  if (props.string === '' && props.type !== 'email') {
+    return (isShiftActive.value = true)
+  }
   isShiftActive.value = !isShiftActive.value
+  props.inputRef.input.focus()
 }
-const enter = () => emits('onEnter')
+
+const close = () => {
+  emits('update:isOpen', false)
+}
+
+watch(
+    () => props.string,
+    (newString) => {
+      if (newString === '' && props.type !== 'email') {
+        isShiftActive.value = true
+      }
+    },
+    { immediate: true }
+)
 </script>
 
 <template>
   <div
       v-if="isOpen"
-      :class="{ 'keyboard-shifted': isShiftActive }"
+      :class="{
+      'keyboard-shifted': isShiftActive || (isTyped && props.type !== 'email'),
+    }"
       class="keyboard"
   >
     <div v-if="type === 'phone'" class="keyboard__block">
       <div class="keyboard__row phone">
-        <div @click="onPressKey('1')" class="keyboard__btn" v-ripple>1</div>
-        <div @click="onPressKey('2')" class="keyboard__btn" v-ripple>2</div>
-        <div @click="onPressKey('3')" class="keyboard__btn" v-ripple>3</div>
-        <div @click="onPressKey('4')" class="keyboard__btn" v-ripple>4</div>
-        <div @click="onPressKey('5')" class="keyboard__btn" v-ripple>5</div>
-        <div @click="onPressKey('6')" class="keyboard__btn" v-ripple>6</div>
-        <div @click="onPressKey('7')" class="keyboard__btn" v-ripple>7</div>
-        <div @click="onPressKey('8')" class="keyboard__btn" v-ripple>8</div>
-        <div @click="onPressKey('9')" class="keyboard__btn" v-ripple>9</div>
-        <div @click="onPressKey('0')" class="keyboard__btn" v-ripple>0</div>
+        <div @click="onInput('1')" class="keyboard__btn" v-ripple>1</div>
+        <div @click="onInput('2')" class="keyboard__btn" v-ripple>2</div>
+        <div @click="onInput('3')" class="keyboard__btn" v-ripple>3</div>
+        <div @click="onInput('4')" class="keyboard__btn" v-ripple>4</div>
+        <div @click="onInput('5')" class="keyboard__btn" v-ripple>5</div>
+        <div @click="onInput('6')" class="keyboard__btn" v-ripple>6</div>
+        <div @click="onInput('7')" class="keyboard__btn" v-ripple>7</div>
+        <div @click="onInput('8')" class="keyboard__btn" v-ripple>8</div>
+        <div @click="onInput('9')" class="keyboard__btn" v-ripple>9</div>
+        <div @click="onInput('0')" class="keyboard__btn" v-ripple>0</div>
         <div @click="backspace" class="keyboard__btn big backspace" v-ripple>
           <svg
-              width="32"
-              height="17"
+              width="52"
+              height="44"
               viewBox="0 0 32 17"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -73,21 +147,23 @@ const enter = () => emits('onEnter')
     </div>
     <div v-else-if="type === 'email'" class="keyboard__block">
       <div class="keyboard__row">
-        <div @click="onPressKey('1')" class="keyboard__btn" v-ripple>1</div>
-        <div @click="onPressKey('2')" class="keyboard__btn" v-ripple>2</div>
-        <div @click="onPressKey('3')" class="keyboard__btn" v-ripple>3</div>
-        <div @click="onPressKey('4')" class="keyboard__btn" v-ripple>4</div>
-        <div @click="onPressKey('5')" class="keyboard__btn" v-ripple>5</div>
-        <div @click="onPressKey('6')" class="keyboard__btn" v-ripple>6</div>
-        <div @click="onPressKey('7')" class="keyboard__btn" v-ripple>7</div>
-        <div @click="onPressKey('8')" class="keyboard__btn" v-ripple>8</div>
-        <div @click="onPressKey('9')" class="keyboard__btn" v-ripple>9</div>
-        <div @click="onPressKey('0')" class="keyboard__btn" v-ripple>0</div>
+        <div @click="onInput('1')" class="keyboard__btn" v-ripple>1</div>
+        <div @click="onInput('2')" class="keyboard__btn" v-ripple>2</div>
+        <div @click="onInput('3')" class="keyboard__btn" v-ripple>3</div>
+        <div @click="onInput('4')" class="keyboard__btn" v-ripple>4</div>
+        <div @click="onInput('5')" class="keyboard__btn" v-ripple>5</div>
+        <div @click="onInput('6')" class="keyboard__btn" v-ripple>6</div>
+        <div @click="onInput('7')" class="keyboard__btn" v-ripple>7</div>
+        <div @click="onInput('8')" class="keyboard__btn" v-ripple>8</div>
+        <div @click="onInput('9')" class="keyboard__btn" v-ripple>9</div>
+        <div @click="onInput('0')" class="keyboard__btn" v-ripple>0</div>
+        <div @click="onInput('-')" class="keyboard__btn" v-ripple>-</div>
+        <div @click="onInput('_')" class="keyboard__btn" v-ripple>_</div>
 
         <div @click="backspace" class="keyboard__btn big backspace" v-ripple>
           <svg
-              width="32"
-              height="17"
+              width="52"
+              height="37"
               viewBox="0 0 32 17"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -106,29 +182,28 @@ const enter = () => emits('onEnter')
         </div>
       </div>
       <div class="keyboard__row">
-        <div @click="onPressKey('q')" class="keyboard__btn" v-ripple>q</div>
-        <div @click="onPressKey('w')" class="keyboard__btn" v-ripple>w</div>
-        <div @click="onPressKey('e')" class="keyboard__btn" v-ripple>e</div>
-        <div @click="onPressKey('r')" class="keyboard__btn" v-ripple>r</div>
-        <div @click="onPressKey('t')" class="keyboard__btn" v-ripple>t</div>
-        <div @click="onPressKey('y')" class="keyboard__btn" v-ripple>y</div>
-        <div @click="onPressKey('u')" class="keyboard__btn" v-ripple>u</div>
-        <div @click="onPressKey('i')" class="keyboard__btn" v-ripple>i</div>
-        <div @click="onPressKey('o')" class="keyboard__btn" v-ripple>o</div>
-        <div @click="onPressKey('p')" class="keyboard__btn" v-ripple>p</div>
-        <div @click="onPressKey('_')" class="keyboard__btn" v-ripple>_</div>
+        <div @click="onInput('q')" class="keyboard__btn" v-ripple>q</div>
+        <div @click="onInput('w')" class="keyboard__btn" v-ripple>w</div>
+        <div @click="onInput('e')" class="keyboard__btn" v-ripple>e</div>
+        <div @click="onInput('r')" class="keyboard__btn" v-ripple>r</div>
+        <div @click="onInput('t')" class="keyboard__btn" v-ripple>t</div>
+        <div @click="onInput('y')" class="keyboard__btn" v-ripple>y</div>
+        <div @click="onInput('u')" class="keyboard__btn" v-ripple>u</div>
+        <div @click="onInput('i')" class="keyboard__btn" v-ripple>i</div>
+        <div @click="onInput('o')" class="keyboard__btn" v-ripple>o</div>
+        <div @click="onInput('p')" class="keyboard__btn" v-ripple>p</div>
+        <div @click="onInput('@')" class="keyboard__btn" v-ripple>@</div>
       </div>
       <div class="keyboard__row">
-        <div @click="onPressKey('a')" class="keyboard__btn" v-ripple>a</div>
-        <div @click="onPressKey('s')" class="keyboard__btn" v-ripple>s</div>
-        <div @click="onPressKey('d')" class="keyboard__btn" v-ripple>d</div>
-        <div @click="onPressKey('f')" class="keyboard__btn" v-ripple>f</div>
-        <div @click="onPressKey('g')" class="keyboard__btn" v-ripple>g</div>
-        <div @click="onPressKey('h')" class="keyboard__btn" v-ripple>h</div>
-        <div @click="onPressKey('j')" class="keyboard__btn" v-ripple>j</div>
-        <div @click="onPressKey('k')" class="keyboard__btn" v-ripple>k</div>
-        <div @click="onPressKey('l')" class="keyboard__btn" v-ripple>l</div>
-        <div @click="onPressKey('@')" class="keyboard__btn" v-ripple>@</div>
+        <div @click="onInput('a')" class="keyboard__btn" v-ripple>a</div>
+        <div @click="onInput('s')" class="keyboard__btn" v-ripple>s</div>
+        <div @click="onInput('d')" class="keyboard__btn" v-ripple>d</div>
+        <div @click="onInput('f')" class="keyboard__btn" v-ripple>f</div>
+        <div @click="onInput('g')" class="keyboard__btn" v-ripple>g</div>
+        <div @click="onInput('h')" class="keyboard__btn" v-ripple>h</div>
+        <div @click="onInput('j')" class="keyboard__btn" v-ripple>j</div>
+        <div @click="onInput('k')" class="keyboard__btn" v-ripple>k</div>
+        <div @click="onInput('l')" class="keyboard__btn" v-ripple>l</div>
         <div @click="enter" class="keyboard__btn big" v-ripple>Enter</div>
       </div>
       <div class="keyboard__row">
@@ -159,37 +234,36 @@ const enter = () => emits('onEnter')
           </svg>
           Shift
         </div>
-        <div @click="onPressKey('z')" class="keyboard__btn" v-ripple>z</div>
-        <div @click="onPressKey('x')" class="keyboard__btn" v-ripple>x</div>
-        <div @click="onPressKey('c')" class="keyboard__btn" v-ripple>c</div>
-        <div @click="onPressKey('v')" class="keyboard__btn" v-ripple>v</div>
-        <div @click="onPressKey('b')" class="keyboard__btn" v-ripple>b</div>
-        <div @click="onPressKey('n')" class="keyboard__btn" v-ripple>n</div>
-        <div @click="onPressKey('m')" class="keyboard__btn" v-ripple>m</div>
-        <div @click="onPressKey('.')" class="keyboard__btn" v-ripple>.</div>
-        <div @click="onPressKey('-')" class="keyboard__btn" v-ripple>-</div>
+        <div @click="onInput('z')" class="keyboard__btn" v-ripple>z</div>
+        <div @click="onInput('x')" class="keyboard__btn" v-ripple>x</div>
+        <div @click="onInput('c')" class="keyboard__btn" v-ripple>c</div>
+        <div @click="onInput('v')" class="keyboard__btn" v-ripple>v</div>
+        <div @click="onInput('b')" class="keyboard__btn" v-ripple>b</div>
+        <div @click="onInput('n')" class="keyboard__btn" v-ripple>n</div>
+        <div @click="onInput('m')" class="keyboard__btn" v-ripple>m</div>
+        <div @click="onInput('.')" class="keyboard__btn" v-ripple>.</div>
+        <div @click="onInput(',')" class="keyboard__btn" v-ripple>,</div>
       </div>
     </div>
     <div v-else class="div">
       <div v-if="lang === 'ru'" class="keyboard__block">
         <div class="keyboard__row">
-          <div @click="onPressKey('й')" class="keyboard__btn" v-ripple>й</div>
-          <div @click="onPressKey('ц')" class="keyboard__btn" v-ripple>ц</div>
-          <div @click="onPressKey('у')" class="keyboard__btn" v-ripple>у</div>
-          <div @click="onPressKey('к')" class="keyboard__btn" v-ripple>к</div>
-          <div @click="onPressKey('е')" class="keyboard__btn" v-ripple>е</div>
-          <div @click="onPressKey('ё')" class="keyboard__btn" v-ripple>ё</div>
-          <div @click="onPressKey('н')" class="keyboard__btn" v-ripple>н</div>
-          <div @click="onPressKey('г')" class="keyboard__btn" v-ripple>г</div>
-          <div @click="onPressKey('ш')" class="keyboard__btn" v-ripple>ш</div>
-          <div @click="onPressKey('щ')" class="keyboard__btn" v-ripple>щ</div>
-          <div @click="onPressKey('з')" class="keyboard__btn" v-ripple>з</div>
-          <div @click="onPressKey('х')" class="keyboard__btn" v-ripple>х</div>
-          <div @click="onPressKey('ъ')" class="keyboard__btn" v-ripple>ъ</div>
+          <div @click="onInput('й')" class="keyboard__btn" v-ripple>й</div>
+          <div @click="onInput('ц')" class="keyboard__btn" v-ripple>ц</div>
+          <div @click="onInput('у')" class="keyboard__btn" v-ripple>у</div>
+          <div @click="onInput('к')" class="keyboard__btn" v-ripple>к</div>
+          <div @click="onInput('е')" class="keyboard__btn" v-ripple>е</div>
+          <div @click="onInput('н')" class="keyboard__btn" v-ripple>н</div>
+          <div @click="onInput('г')" class="keyboard__btn" v-ripple>г</div>
+          <div @click="onInput('ш')" class="keyboard__btn" v-ripple>ш</div>
+          <div @click="onInput('щ')" class="keyboard__btn" v-ripple>щ</div>
+          <div @click="onInput('з')" class="keyboard__btn" v-ripple>з</div>
+          <div @click="onInput('х')" class="keyboard__btn" v-ripple>х</div>
+          <div @click="onInput('ъ')" class="keyboard__btn" v-ripple>ъ</div>
           <div @click="backspace" class="keyboard__btn big backspace" v-ripple>
             <svg
-                width="32"
-                height="17"
+                width="52"
+                height="44"
                 viewBox="0 0 32 17"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -208,17 +282,17 @@ const enter = () => emits('onEnter')
           </div>
         </div>
         <div class="keyboard__row">
-          <div @click="onPressKey('ф')" class="keyboard__btn" v-ripple>ф</div>
-          <div @click="onPressKey('ы')" class="keyboard__btn" v-ripple>ы</div>
-          <div @click="onPressKey('в')" class="keyboard__btn" v-ripple>в</div>
-          <div @click="onPressKey('а')" class="keyboard__btn" v-ripple>а</div>
-          <div @click="onPressKey('п')" class="keyboard__btn" v-ripple>п</div>
-          <div @click="onPressKey('р')" class="keyboard__btn" v-ripple>р</div>
-          <div @click="onPressKey('о')" class="keyboard__btn" v-ripple>о</div>
-          <div @click="onPressKey('л')" class="keyboard__btn" v-ripple>л</div>
-          <div @click="onPressKey('д')" class="keyboard__btn" v-ripple>д</div>
-          <div @click="onPressKey('ж')" class="keyboard__btn" v-ripple>ж</div>
-          <div @click="onPressKey('э')" class="keyboard__btn" v-ripple>э</div>
+          <div @click="onInput('ф')" class="keyboard__btn" v-ripple>ф</div>
+          <div @click="onInput('ы')" class="keyboard__btn" v-ripple>ы</div>
+          <div @click="onInput('в')" class="keyboard__btn" v-ripple>в</div>
+          <div @click="onInput('а')" class="keyboard__btn" v-ripple>а</div>
+          <div @click="onInput('п')" class="keyboard__btn" v-ripple>п</div>
+          <div @click="onInput('р')" class="keyboard__btn" v-ripple>р</div>
+          <div @click="onInput('о')" class="keyboard__btn" v-ripple>о</div>
+          <div @click="onInput('л')" class="keyboard__btn" v-ripple>л</div>
+          <div @click="onInput('д')" class="keyboard__btn" v-ripple>д</div>
+          <div @click="onInput('ж')" class="keyboard__btn" v-ripple>ж</div>
+          <div @click="onInput('э')" class="keyboard__btn" v-ripple>э</div>
           <div @click="enter" class="keyboard__btn big" v-ripple>Enter</div>
         </div>
         <div class="keyboard__row">
@@ -249,42 +323,39 @@ const enter = () => emits('onEnter')
             </svg>
             Shift
           </div>
+
+          <div @click="onInput('я')" class="keyboard__btn" v-ripple>я</div>
+          <div @click="onInput('ч')" class="keyboard__btn" v-ripple>ч</div>
+          <div @click="onInput('с')" class="keyboard__btn" v-ripple>с</div>
+          <div @click="onInput('м')" class="keyboard__btn" v-ripple>м</div>
+          <div @click="onInput('и')" class="keyboard__btn" v-ripple>и</div>
+          <div @click="onInput('т')" class="keyboard__btn" v-ripple>т</div>
+          <div @click="onInput('ь')" class="keyboard__btn" v-ripple>ь</div>
+          <div @click="onInput('б')" class="keyboard__btn" v-ripple>б</div>
+          <div @click="onInput('ю')" class="keyboard__btn" v-ripple>ю</div>
           <div @click="lang = 'num'" class="keyboard__btn" v-ripple>&123</div>
-          <div @click="onPressKey('я')" class="keyboard__btn" v-ripple>я</div>
-          <div @click="onPressKey('ч')" class="keyboard__btn" v-ripple>ч</div>
-          <div @click="onPressKey('с')" class="keyboard__btn" v-ripple>с</div>
-          <div @click="onPressKey('м')" class="keyboard__btn" v-ripple>м</div>
-          <div @click="onPressKey('и')" class="keyboard__btn" v-ripple>и</div>
-          <div @click="onPressKey('т')" class="keyboard__btn" v-ripple>т</div>
-          <div @click="onPressKey('ь')" class="keyboard__btn" v-ripple>ь</div>
-          <div @click="onPressKey('б')" class="keyboard__btn" v-ripple>б</div>
-          <div @click="onPressKey('ю')" class="keyboard__btn" v-ripple>ю</div>
           <div @click="lang = 'en'" class="keyboard__btn" v-ripple>ENG</div>
         </div>
         <div class="keyboard__row">
-          <div
-              @click="onPressKey(' ')"
-              class="keyboard__btn big space"
-              v-ripple
-          ></div>
+          <div @click="onInput(' ')" class="keyboard__btn space" v-ripple></div>
         </div>
       </div>
       <div v-if="lang === 'en'" class="keyboard__block">
         <div class="keyboard__row">
-          <div @click="onPressKey('q')" class="keyboard__btn" v-ripple>q</div>
-          <div @click="onPressKey('w')" class="keyboard__btn" v-ripple>w</div>
-          <div @click="onPressKey('e')" class="keyboard__btn" v-ripple>e</div>
-          <div @click="onPressKey('r')" class="keyboard__btn" v-ripple>r</div>
-          <div @click="onPressKey('t')" class="keyboard__btn" v-ripple>t</div>
-          <div @click="onPressKey('y')" class="keyboard__btn" v-ripple>y</div>
-          <div @click="onPressKey('u')" class="keyboard__btn" v-ripple>u</div>
-          <div @click="onPressKey('i')" class="keyboard__btn" v-ripple>i</div>
-          <div @click="onPressKey('o')" class="keyboard__btn" v-ripple>o</div>
-          <div @click="onPressKey('p')" class="keyboard__btn" v-ripple>p</div>
+          <div @click="onInput('q')" class="keyboard__btn" v-ripple>q</div>
+          <div @click="onInput('w')" class="keyboard__btn" v-ripple>w</div>
+          <div @click="onInput('e')" class="keyboard__btn" v-ripple>e</div>
+          <div @click="onInput('r')" class="keyboard__btn" v-ripple>r</div>
+          <div @click="onInput('t')" class="keyboard__btn" v-ripple>t</div>
+          <div @click="onInput('y')" class="keyboard__btn" v-ripple>y</div>
+          <div @click="onInput('u')" class="keyboard__btn" v-ripple>u</div>
+          <div @click="onInput('i')" class="keyboard__btn" v-ripple>i</div>
+          <div @click="onInput('o')" class="keyboard__btn" v-ripple>o</div>
+          <div @click="onInput('p')" class="keyboard__btn" v-ripple>p</div>
           <div @click="backspace" class="keyboard__btn big backspace" v-ripple>
             <svg
-                width="32"
-                height="17"
+                width="52"
+                height="44"
                 viewBox="0 0 32 17"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -303,15 +374,15 @@ const enter = () => emits('onEnter')
           </div>
         </div>
         <div class="keyboard__row">
-          <div @click="onPressKey('a')" class="keyboard__btn" v-ripple>a</div>
-          <div @click="onPressKey('s')" class="keyboard__btn" v-ripple>s</div>
-          <div @click="onPressKey('d')" class="keyboard__btn" v-ripple>d</div>
-          <div @click="onPressKey('f')" class="keyboard__btn" v-ripple>f</div>
-          <div @click="onPressKey('g')" class="keyboard__btn" v-ripple>g</div>
-          <div @click="onPressKey('h')" class="keyboard__btn" v-ripple>h</div>
-          <div @click="onPressKey('j')" class="keyboard__btn" v-ripple>j</div>
-          <div @click="onPressKey('k')" class="keyboard__btn" v-ripple>k</div>
-          <div @click="onPressKey('l')" class="keyboard__btn" v-ripple>l</div>
+          <div @click="onInput('a')" class="keyboard__btn" v-ripple>a</div>
+          <div @click="onInput('s')" class="keyboard__btn" v-ripple>s</div>
+          <div @click="onInput('d')" class="keyboard__btn" v-ripple>d</div>
+          <div @click="onInput('f')" class="keyboard__btn" v-ripple>f</div>
+          <div @click="onInput('g')" class="keyboard__btn" v-ripple>g</div>
+          <div @click="onInput('h')" class="keyboard__btn" v-ripple>h</div>
+          <div @click="onInput('j')" class="keyboard__btn" v-ripple>j</div>
+          <div @click="onInput('k')" class="keyboard__btn" v-ripple>k</div>
+          <div @click="onInput('l')" class="keyboard__btn" v-ripple>l</div>
           <div @click="enter" class="keyboard__btn big" v-ripple>Enter</div>
         </div>
         <div class="keyboard__row">
@@ -342,54 +413,46 @@ const enter = () => emits('onEnter')
             </svg>
             Shift
           </div>
+
+          <div @click="onInput('z')" class="keyboard__btn" v-ripple>z</div>
+          <div @click="onInput('x')" class="keyboard__btn" v-ripple>x</div>
+          <div @click="onInput('c')" class="keyboard__btn" v-ripple>c</div>
+          <div @click="onInput('v')" class="keyboard__btn" v-ripple>v</div>
+          <div @click="onInput('b')" class="keyboard__btn" v-ripple>b</div>
+          <div @click="onInput('n')" class="keyboard__btn" v-ripple>n</div>
+          <div @click="onInput('m')" class="keyboard__btn" v-ripple>m</div>
           <div @click="lang = 'num'" class="keyboard__btn" v-ripple>&123</div>
-          <div @click="onPressKey('@')" class="keyboard__btn" v-ripple>@</div>
-          <div @click="onPressKey('z')" class="keyboard__btn" v-ripple>z</div>
-          <div @click="onPressKey('x')" class="keyboard__btn" v-ripple>x</div>
-          <div @click="onPressKey('c')" class="keyboard__btn" v-ripple>c</div>
-          <div @click="onPressKey('v')" class="keyboard__btn" v-ripple>v</div>
-          <div @click="onPressKey('b')" class="keyboard__btn" v-ripple>b</div>
-          <div @click="onPressKey('n')" class="keyboard__btn" v-ripple>n</div>
-          <div @click="onPressKey('m')" class="keyboard__btn" v-ripple>m</div>
           <div @click="lang = 'ru'" class="keyboard__btn" v-ripple>RU</div>
         </div>
         <div class="keyboard__row">
-          <div
-              @click="onPressKey(' ')"
-              class="keyboard__btn big space"
-              v-ripple
-          ></div>
+          <div @click="onInput(' ')" class="keyboard__btn space" v-ripple></div>
         </div>
       </div>
       <div v-if="lang === 'num'" class="keyboard__block">
         <div class="keyboard__row">
-          <div @click="onPressKey('1')" class="keyboard__btn" v-ripple>1</div>
-          <div @click="onPressKey('2')" class="keyboard__btn" v-ripple>2</div>
-          <div @click="onPressKey('3')" class="keyboard__btn" v-ripple>3</div>
-          <div @click="onPressKey('4')" class="keyboard__btn" v-ripple>4</div>
-          <div @click="onPressKey('5')" class="keyboard__btn" v-ripple>5</div>
-          <div @click="onPressKey('6')" class="keyboard__btn" v-ripple>6</div>
-          <div @click="onPressKey('7')" class="keyboard__btn" v-ripple>7</div>
-          <div @click="onPressKey('8')" class="keyboard__btn" v-ripple>8</div>
-          <div @click="onPressKey('9')" class="keyboard__btn" v-ripple>9</div>
-          <div @click="onPressKey('0')" class="keyboard__btn" v-ripple>0</div>
-          <div @click="onPressKey('.')" class="keyboard__btn" v-ripple>.</div>
-          <div @click="onPressKey(',')" class="keyboard__btn" v-ripple>,</div>
-          <div @click="onPressKey(':')" class="keyboard__btn" v-ripple>:</div>
-          <div @click="onPressKey('!')" class="keyboard__btn" v-ripple>!</div>
-          <div @click="onPressKey('?')" class="keyboard__btn" v-ripple>?</div>
+          <div @click="onInput('1')" class="keyboard__btn" v-ripple>1</div>
+          <div @click="onInput('2')" class="keyboard__btn" v-ripple>2</div>
+          <div @click="onInput('3')" class="keyboard__btn" v-ripple>3</div>
+          <div @click="onInput('4')" class="keyboard__btn" v-ripple>4</div>
+          <div @click="onInput('5')" class="keyboard__btn" v-ripple>5</div>
+          <div @click="onInput('6')" class="keyboard__btn" v-ripple>6</div>
+          <div @click="onInput('7')" class="keyboard__btn" v-ripple>7</div>
+          <div @click="onInput('8')" class="keyboard__btn" v-ripple>8</div>
+          <div @click="onInput('9')" class="keyboard__btn" v-ripple>9</div>
+          <div @click="onInput('0')" class="keyboard__btn" v-ripple>0</div>
+          <div @click="onInput('.')" class="keyboard__btn" v-ripple>.</div>
+          <div @click="onInput(',')" class="keyboard__btn" v-ripple>,</div>
+          <div @click="onInput(':')" class="keyboard__btn" v-ripple>:</div>
+          <div @click="onInput('!')" class="keyboard__btn" v-ripple>!</div>
+          <div @click="onInput('?')" class="keyboard__btn" v-ripple>?</div>
         </div>
         <div class="keyboard__row">
           <div @click="lang = 'ru'" class="keyboard__btn" v-ripple>АБВ</div>
-          <div
-              @click="onPressKey(' ')"
-              class="keyboard__btn big space"
-              v-ripple
-          ></div>
+          <div @click="onInput(' ')" class="keyboard__btn space" v-ripple></div>
           <div @click="backspace" class="keyboard__btn big backspace" v-ripple>
             <svg
-                width="32"
-                height="17"
+                width="52"
+                height="44"
                 viewBox="0 0 32 17"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -413,5 +476,5 @@ const enter = () => emits('onEnter')
 </template>
 
 <style scoped lang="scss">
-@import './Vkeyboard.scss';
+@import 'Vkeyboard';
 </style>
