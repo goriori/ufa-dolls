@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 </script>
 
 <template>
@@ -23,6 +22,7 @@
     justify-content: center;
     align-items: center;
   }
+
   &-content {
     width: 100%;
     height: 100%;

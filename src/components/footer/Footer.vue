@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { useRouter} from "vue-router";
+import {useRouter} from "vue-router";
 import {computed, ref} from "vue";
 import {useApplicationStore} from "@/store/application.store.ts";
 import RecordButton from "@/components/ui/button/record-button/RecordButton.vue";
@@ -36,14 +36,21 @@ const onStop = () => emits('onStop')
 
 <template>
   <footer class="footer">
-    <ToMainButton @click="onToMain"/>
-    <RecordButton
-        v-if="namePage === 'record_tail'"
-        :state="recordState"
-        @on-record="onRecord"
-        @on-stop="onStop"
-    />
-    <NextButton @click="onNext"/>
+    <section>
+      <ToMainButton @click="onToMain"/>
+    </section>
+    <section>
+      <RecordButton
+          v-if="namePage === 'record_tail'"
+          :state="recordState"
+          @on-record="onRecord"
+          @on-stop="onStop"
+      />
+    </section>
+    <section>
+      <NextButton v-show="namePage !== 'record_tail'" @click="onNext"/>
+    </section>
+
   </footer>
 </template>
 
@@ -55,5 +62,9 @@ const onStop = () => emits('onStop')
   justify-content: space-between;
   align-items: center;
   max-height: 150px;
+}
+
+section {
+  height: 100%;
 }
 </style>

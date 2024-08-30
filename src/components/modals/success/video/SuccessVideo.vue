@@ -14,7 +14,6 @@ const router = useRouter()
 const modalSettings = computed(() => applicationStore.getSettings('success-video'))
 
 
-
 const onSendEmail = async (form: Form) => {
   console.log('send start')
   applicationStore.toggleLoading()
@@ -38,9 +37,22 @@ const onSendEmail = async (form: Form) => {
   }
 }
 
+const onClose = () => {
+  applicationStore.toggleModal('success-video')
+}
+
 const onToMain = () => {
   applicationStore.toggleModal('success-video')
-  router.push('/')
+  const targetTail = dollStore.getTargetTail()
+  if (targetTail) {
+    targetTail.setTargetPerson(null)
+    targetTail.setTargetBackground(null)
+    targetTail.switchFocus()
+  }
+  dollStore.setTargetTail(null)
+  const homePath = window.HOME
+  if (homePath) window.location.href = homePath
+  else router.push('/')
 }
 </script>
 
@@ -49,6 +61,7 @@ const onToMain = () => {
       :video-src="modalSettings?.targetVideo || ''"
       @on-send-email="onSendEmail"
       @on-to-main="onToMain"
+      @on-close="onClose"
   />
 </template>
 

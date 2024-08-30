@@ -9,6 +9,7 @@ import Input from "@/components/ui/input/Input.vue";
 import Email from "@/components/ui/svg/Email.vue";
 import ComeBack from "@/components/ui/svg/ComeBack.vue";
 import Keyboard from "@/components/ui/keyboard/Keyboard.vue";
+import Cross from "@/components/ui/svg/Cross.vue";
 
 type MProps = {
   videoSrc: string
@@ -25,6 +26,7 @@ export type Form = {
 }
 
 type MEmits = {
+  (eventName: 'onClose'): void
   (eventName: 'onInvalidEmail'): void
   (eventName: 'onSendEmail', form: Form): void
   (eventName: 'onToMain'): void
@@ -78,6 +80,8 @@ const onBackspace = (field: keyof Form) => {
   }
 
 }
+
+const onClose = () => emits('onClose')
 const onSendEmail = () => {
   if (!emailTest(form.value.email.value)) {
     form.value.email.state = 'error'
@@ -86,7 +90,6 @@ const onSendEmail = () => {
   form.value.email.state = 'success'
   return emits('onSendEmail', form.value)
 }
-
 const onToMain = () => emits('onToMain')
 
 </script>
@@ -94,9 +97,12 @@ const onToMain = () => emits('onToMain')
 <template>
   <Modal>
     <template #window>
-      <div class="window" v-outside="()=> form.email.focus = false">
+      <div class="window" v-outside="()=>{
+         form.email.focus = false
+      }">
         <section class="window-top">
           <SuccessVideo/>
+          <Cross @click="onClose" class="cross"/>
         </section>
         <section class="window-center">
           <h1 class="message">Вы успешно записали сказку</h1>
@@ -131,7 +137,7 @@ const onToMain = () => emits('onToMain')
   </Modal>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .window {
   position: relative;
   width: 100%;
@@ -154,6 +160,17 @@ const onToMain = () => emits('onToMain')
   max-height: 285px;
   display: flex;
   justify-content: center;
+
+  .cross {
+    position: absolute;
+    cursor: pointer;
+    top: 250px;
+    right: -150px;
+    transition: 0.3s all ease-in-out;
+    &:active {
+      transform: scale(0.9);
+    }
+  }
 }
 
 
@@ -174,8 +191,6 @@ hr {
   display: flex;
   flex-direction: column;
   gap: 80px;
-
-
 }
 
 .window-bottom {

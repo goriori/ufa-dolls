@@ -99,6 +99,7 @@ onUnmounted(() => {
 
 <template>
   <div class="page">
+    <section class="top"></section>
     <section class="center">
       <div class="background">
         <video
@@ -116,10 +117,10 @@ onUnmounted(() => {
         <div class="video-actions">
           <div class="left"></div>
           <div class="center">
-<!--            <Button class="btn" color="primary" :icon="BackStepVideo" @click="onBackStep"/>-->
+            <!--            <Button class="btn" color="primary" :icon="BackStepVideo" @click="onBackStep"/>-->
             <Button class="btn" v-if="!play" color="primary" :icon="Play" @click="onPlay"/>
             <Button class="btn" v-else color="primary" :icon="Pause" @click="onPause"/>
-<!--            <Button class="btn" color="primary" :icon="NextStepVideo" @click="onNextStep"/>-->
+            <!--            <Button class="btn" color="primary" :icon="NextStepVideo" @click="onNextStep"/>-->
           </div>
           <div class="right">
             <Button class="btn" v-if="sound" color="primary" :icon="SoundOff" @click="onMuted"/>
@@ -133,7 +134,7 @@ onUnmounted(() => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .page {
   width: 100%;
   height: 100%;
@@ -141,9 +142,10 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 80px;
+  gap: 200px;
   padding: 130px;
   background: linear-gradient(rgba(255, 127, 106, 1), rgba(255, 177, 105, 1), rgba(255, 235, 130, 1));
+
 }
 
 .background {

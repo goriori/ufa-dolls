@@ -65,7 +65,6 @@ const onCancel = () => emits('onCancel')
 .cross {
   cursor: pointer;
   transition: 0.3s all ease-in-out;
-
   &:active {
     transform: scale(0.9);
   }
