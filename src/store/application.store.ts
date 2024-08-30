@@ -39,7 +39,7 @@ export const useApplicationStore = defineStore('application', () => {
             settings: {
                 videoName: '',
                 targetVideo: '',
-                show: false
+                show: true
             }
         },
         {

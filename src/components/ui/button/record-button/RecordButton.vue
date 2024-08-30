@@ -42,13 +42,10 @@ const onClick = () => {
 </template>
 
 <style scoped>
-.btn {
-  font-size: 40px;
-}
+
 
 .btn-play {
   gap: 55px;
-  max-width: 650px;
 }
 
 .btn-stop {

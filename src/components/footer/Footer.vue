@@ -37,7 +37,7 @@ const onStop = () => emits('onStop')
 <template>
   <footer class="footer">
     <section>
-      <ToMainButton @click="onToMain"/>
+      <ToMainButton @click="onToMain" class="btn-main"/>
     </section>
     <section>
       <RecordButton
@@ -45,16 +45,17 @@ const onStop = () => emits('onStop')
           :state="recordState"
           @on-record="onRecord"
           @on-stop="onStop"
+          class="btn-record"
       />
     </section>
     <section>
-      <NextButton v-show="namePage !== 'record_tail'" @click="onNext"/>
+      <NextButton v-show="namePage !== 'record_tail'" @click="onNext" class="btn-next"/>
     </section>
 
   </footer>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .footer {
   width: 100%;
   height: 100%;
@@ -66,5 +67,20 @@ const onStop = () => emits('onStop')
 
 section {
   height: 100%;
+}
+
+.btn {
+  &-main {
+    max-width: 652px;
+  }
+
+  &-record {
+    margin-right: 600px;
+    max-width: 730px;
+  }
+
+  &-next {
+    max-width: 400px;
+  }
 }
 </style>

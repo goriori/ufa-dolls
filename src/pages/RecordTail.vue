@@ -185,7 +185,7 @@ onUnmounted(() => {
                     class="pulsar"/>
       </Transition>
       <Transition name="fade">
-        <RecordHint v-if="!stateRecord && !loading" :x="1000" :y="1700" class="pulsar"/>
+        <RecordHint v-if="!stateRecord && !loading" :x="900" :y="1700" class="pulsar"/>
       </Transition>
     </Teleport>
     <template v-if="!loading">

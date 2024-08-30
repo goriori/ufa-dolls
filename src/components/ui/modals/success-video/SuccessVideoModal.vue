@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {ref, VNodeRef} from "vue";
+import {onMounted, ref, VNodeRef} from "vue";
 import {useRegular} from "@/utils/useRegular";
 import Modal from "@/components/ui/modals/Modal.vue";
 import Button from "@/components/ui/button/Button.vue";
@@ -91,7 +91,6 @@ const onSendEmail = () => {
   return emits('onSendEmail', form.value)
 }
 const onToMain = () => emits('onToMain')
-
 </script>
 
 <template>
@@ -167,6 +166,7 @@ const onToMain = () => emits('onToMain')
     top: 250px;
     right: -150px;
     transition: 0.3s all ease-in-out;
+
     &:active {
       transform: scale(0.9);
     }
